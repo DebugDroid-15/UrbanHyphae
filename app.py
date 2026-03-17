@@ -270,9 +270,9 @@ if __name__ == '__main__':
     if not init_modbus():
         logger.warning("Starting Flask server without Modbus connection")
     
-    # Run Flask app
+    # Run Flask app (listen on both IPv4 and IPv6)
     try:
-        app.run(host='0.0.0.0', port=5000, debug=False, threaded=True)
+        app.run(host='::', port=5000, debug=False, threaded=True)
     except KeyboardInterrupt:
         logger.info("Shutting down...")
     finally:
