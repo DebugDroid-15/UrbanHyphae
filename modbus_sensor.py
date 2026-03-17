@@ -82,9 +82,6 @@ class SensorData:
             'temperature': self.temperature_raw,
         }
         return data
-            'is_valid': self.is_valid,
-            'error': self.error
-        }
 
 
 class ModbusNPKReader:

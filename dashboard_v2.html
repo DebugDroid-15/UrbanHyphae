@@ -1944,40 +1944,69 @@
             document.getElementById(`container${num}_status`).classList.toggle('active');
         }
 
-        // Data updates - connected to real API
-        function updateSensorData() {
-            // Fetch real data from API or use cached data
-            const mockData = {
-                1: { n: 74.5, p: 252.5, k: 163.5, ph: 6.98, ec: 5.58, temp: 10.97 },
-                2: { n: '--', p: '--', k: '--', ph: '--', ec: '--', temp: '--' },
-                3: { n: '--', p: '--', k: '--', ph: '--', ec: '--', temp: '--' },
-                4: { n: '--', p: '--', k: '--', ph: '--', ec: '--', temp: '--' }
-            };
+        // Data updates - connected to Vercel API
+        async function updateSensorData() {
+            try {
+                // Fetch data from Vercel API
+                const response = await fetch('/api/sensor-data');
+                const data = await response.json();
+                
+                if (data.latest && data.latest.sensors) {
+                    const sensors = data.latest.sensors;
+                    
+                    // Update sensor displays
+                    for (let i = 1; i <= 4; i++) {
+                        const sensorKey = `sensor_${i}`;
+                        const sensor = sensors[sensorKey];
+                        
+                        if (sensor && sensor.connected) {
+                            document.getElementById(`sensor${i}_n`).textContent = (sensor.nitrogen || '--').toFixed(1);
+                            document.getElementById(`sensor${i}_p`).textContent = (sensor.phosphorus || '--').toFixed(1);
+                            document.getElementById(`sensor${i}_k`).textContent = (sensor.potassium || '--').toFixed(1);
+                            document.getElementById(`sensor${i}_ph`).textContent = (sensor.ph || '--').toFixed(2);
+                            document.getElementById(`sensor${i}_ec`).textContent = (sensor.ec || '--').toFixed(2);
+                            document.getElementById(`sensor${i}_temp`).textContent = (sensor.temperature || '--').toFixed(1);
+                        } else {
+                            // Show disconnected
+                            document.getElementById(`sensor${i}_n`).textContent = '❌';
+                            document.getElementById(`sensor${i}_p`).textContent = '❌';
+                            document.getElementById(`sensor${i}_k`).textContent = '❌';
+                            document.getElementById(`sensor${i}_ph`).textContent = 'Offline';
+                            document.getElementById(`sensor${i}_ec`).textContent = 'Offline';
+                            document.getElementById(`sensor${i}_temp`).textContent = '❌';
+                        }
+                    }
+                    
+                    // Update last update time
+                    document.getElementById('lastUpdate').textContent = `Last: ${new Date().toLocaleTimeString()}`;
+                }
+                
+                // Update environment stats
+                document.getElementById('roomTemp').textContent = '22.5';
+                document.getElementById('roomHumidity').textContent = '65';
+                document.getElementById('room_temp_display').textContent = '22.5 °C';
+                document.getElementById('room_humidity_display').textContent = '65 %';
 
-            for (let i = 1; i <= 4; i++) {
-                const data = mockData[i];
-                document.getElementById(`sensor${i}_n`).textContent = data.n;
-                document.getElementById(`sensor${i}_p`).textContent = data.p;
-                document.getElementById(`sensor${i}_k`).textContent = data.k;
-                document.getElementById(`sensor${i}_ph`).textContent = data.ph;
-                document.getElementById(`sensor${i}_ec`).textContent = data.ec;
-                document.getElementById(`sensor${i}_temp`).textContent = data.temp;
+                // Update AC status
+                document.getElementById('acStatus').textContent = state.ac ? '❄️ ON' : '⏸️ OFF';
+
+                // Count active lights
+                const activeUV = Object.values(state.lights.uv).filter(x => x).length;
+                const activeRed = Object.values(state.lights.red).filter(x => x).length;
+                document.getElementById('activeLights').textContent = (activeUV + activeRed);
+                
+            } catch (error) {
+                console.error('Error fetching sensor data:', error);
+                // Show offline status
+                for (let i = 1; i <= 4; i++) {
+                    document.getElementById(`sensor${i}_n`).textContent = 'Offline';
+                    document.getElementById(`sensor${i}_p`).textContent = 'Offline';
+                    document.getElementById(`sensor${i}_k`).textContent = 'Offline';
+                    document.getElementById(`sensor${i}_ph`).textContent = 'Offline';
+                    document.getElementById(`sensor${i}_ec`).textContent = 'Offline';
+                    document.getElementById(`sensor${i}_temp`).textContent = 'Offline';
+                }
             }
-
-            // Update room environment
-            document.getElementById('roomTemp').textContent = '22.5';
-            document.getElementById('roomHumidity').textContent = '65';
-            document.getElementById('room_temp_display').textContent = '22.5 °C';
-            document.getElementById('room_humidity_display').textContent = '65 %';
-            document.getElementById('lastUpdate').textContent = `Last: ${new Date().toLocaleTimeString()}`;
-
-            // Update AC status
-            document.getElementById('acStatus').textContent = state.ac ? '❄️ ON' : '⏸️ OFF';
-
-            // Count active lights
-            const activeUV = Object.values(state.lights.uv).filter(x => x).length;
-            const activeRed = Object.values(state.lights.red).filter(x => x).length;
-            document.getElementById('activeLights').textContent = (activeUV + activeRed);
         }
 
         // Initialize

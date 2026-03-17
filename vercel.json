@@ -1,0 +1,7 @@
+{
+  "buildCommand": "echo 'No build needed'",
+  "outputDirectory": ".",
+  "env": {
+    "API_KEY": "@mushroom_api_key"
+  }
+}
