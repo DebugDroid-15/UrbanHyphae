@@ -140,10 +140,25 @@
             padding: 10px 15px;
             border-radius: 5px;
             border-left: 3px solid #00d4ff;
+            transition: all 0.3s ease;
+        }
+
+        .stat-block.connected {
+            background: rgba(0,212,255,0.1);
+            border-left-color: #00d4ff;
+        }
+
+        .stat-block.disconnected {
+            background: rgba(231,76,60,0.1);
+            border-left-color: #e74c3c;
         }
 
         .stat-block strong {
             color: #00d4ff;
+        }
+
+        .stat-block.disconnected strong {
+            color: #e74c3c;
         }
 
         /* Grid Layout */
@@ -586,8 +601,8 @@
                     <h1>Grow Room Control Center</h1>
                 </div>
                 <div class="header-info">
-                    <div class="stat-block">
-                        <strong id="systemStatus">● Online</strong>
+                    <div class="stat-block connected">
+                        <strong id="systemStatus">● Connected</strong>
                     </div>
                     <div class="stat-block">
                         <strong id="lastUpdate">Last: Just now</strong>
@@ -1951,6 +1966,12 @@
                 const response = await fetch('/api/sensor-data');
                 const data = await response.json();
                 
+                // Show as CONNECTED
+                const statusEl = document.getElementById('systemStatus');
+                statusEl.textContent = '● Connected';
+                statusEl.parentElement.classList.remove('disconnected');
+                statusEl.parentElement.classList.add('connected');
+                
                 if (data.latest && data.latest.sensors) {
                     const sensors = data.latest.sensors;
                     
@@ -1997,6 +2018,13 @@
                 
             } catch (error) {
                 console.error('Error fetching sensor data:', error);
+                
+                // Show as NOT CONNECTED
+                const statusEl = document.getElementById('systemStatus');
+                statusEl.textContent = '● Not Connected';
+                statusEl.parentElement.classList.remove('connected');
+                statusEl.parentElement.classList.add('disconnected');
+                
                 // Show offline status
                 for (let i = 1; i <= 4; i++) {
                     document.getElementById(`sensor${i}_n`).textContent = 'Offline';
