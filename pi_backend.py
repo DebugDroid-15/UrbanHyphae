@@ -15,8 +15,8 @@ from modbus_sensor import ModbusNPKReader, initialize_logger
 DATA_DIR = Path("/home/mushroom/mushroom_monitoring/data")
 DATA_DIR.mkdir(exist_ok=True)
 
-VERCEL_URL = "https://mushroom-dashboard.vercel.app"  # Replace with your actual Vercel URL
-API_KEY = "your-api-key-here"  # Set a secure API key
+VERCEL_URL = "https://urban-hyphae.vercel.app"  # Your Vercel URL
+API_KEY = "mushroom_2024_secure_key_12345"  # Must match Vercel environment variable
 
 # Initialize sensor
 logger = initialize_logger("pi_backend")
