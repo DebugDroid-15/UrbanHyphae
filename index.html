@@ -126,6 +126,11 @@
 
         .content-area {
             padding: 30px;
+            display: none;
+        }
+
+        .content-area.active {
+            display: block;
         }
 
         .section-title {
@@ -277,6 +282,13 @@
             box-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
         }
 
+        .control-btn.active {
+            background: rgba(46, 204, 113, 0.3);
+            border-color: #2ecc71;
+            color: #2ecc71;
+            box-shadow: 0 0 15px rgba(46, 204, 113, 0.5);
+        }
+
         .climate-system {
             background: linear-gradient(135deg, #1a2f42 0%, #0f1f2e 100%);
             border: 1px solid #2a4a5a;
@@ -349,6 +361,63 @@
             background: rgba(231, 76, 60, 0.2);
             color: #e74c3c;
         }
+
+        .alert-message {
+            background: rgba(0, 191, 255, 0.1);
+            border-left: 3px solid #00bfff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            color: #00bfff;
+        }
+
+        .alert-message.success {
+            background: rgba(46, 204, 113, 0.1);
+            border-left-color: #2ecc71;
+            color: #2ecc71;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #00bfff;
+            font-weight: 600;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #2a4a5a;
+            color: #e0e0e0;
+            border-radius: 4px;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #00bfff;
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
+        }
+
+        .btn-save {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #00bfff, #0099cc);
+            color: #000;
+            border: none;
+            border-radius: 6px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-save:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 191, 255, 0.4);
+        }
     </style>
 </head>
 <body>
@@ -361,45 +430,27 @@
 
         <div class="nav-section">
             <div class="nav-section-title">DASHBOARD</div>
-            <div class="nav-item active">
-                <span>📊</span> Overview
-            </div>
+            <div class="nav-item active" onclick="navigateTo('overview')">📊 Overview</div>
         </div>
 
         <div class="nav-section">
             <div class="nav-section-title">MONITORING</div>
-            <div class="nav-item">
-                <span>🌱</span> Soil Sensors
-            </div>
-            <div class="nav-item">
-                <span>🌍</span> Environment
-            </div>
+            <div class="nav-item" onclick="navigateTo('soil')">🌱 Soil Sensors</div>
+            <div class="nav-item" onclick="navigateTo('environment')">🌍 Environment</div>
         </div>
 
         <div class="nav-section">
             <div class="nav-section-title">CONTROLS</div>
-            <div class="nav-item">
-                <span>💡</span> Lighting
-            </div>
-            <div class="nav-item">
-                <span>❄️</span> Climate
-            </div>
-            <div class="nav-item">
-                <span>💧</span> Humidifiers
-            </div>
+            <div class="nav-item" onclick="navigateTo('lighting')">💡 Lighting</div>
+            <div class="nav-item" onclick="navigateTo('climate')">❄️ Climate</div>
+            <div class="nav-item" onclick="navigateTo('humidifiers')">💧 Humidifiers</div>
         </div>
 
         <div class="nav-section">
             <div class="nav-section-title">SYSTEM</div>
-            <div class="nav-item">
-                <span>⚠️</span> Alerts
-            </div>
-            <div class="nav-item">
-                <span>📈</span> History
-            </div>
-            <div class="nav-item">
-                <span>⚙️</span> Settings
-            </div>
+            <div class="nav-item" onclick="navigateTo('alerts')">⚠️ Alerts</div>
+            <div class="nav-item" onclick="navigateTo('history')">📈 History</div>
+            <div class="nav-item" onclick="navigateTo('settings')">⚙️ Settings</div>
         </div>
     </div>
 
@@ -407,7 +458,7 @@
     <div class="main-content">
         <!-- HEADER -->
         <div class="header">
-            <h1>🌱 Grow Room Control Center</h1>
+            <h1 id="pageTitle">🌱 Grow Room Control Center</h1>
             <div class="status-bar">
                 <div class="status-item">
                     <span class="status-dot"></span>
@@ -418,7 +469,7 @@
         </div>
 
         <!-- CONTENT -->
-        <div class="content-area">
+        <div class="content-area active" id="overview">
             <!-- ROOM CONTROLS -->
             <div class="room-controls">
                 <div class="control-card">
@@ -486,8 +537,8 @@
                             </div>
                         </div>
                         <div class="container-controls">
-                            <button class="control-btn">💧 Humidifier</button>
-                            <button class="control-btn">🔌 OFF</button>
+                            <button class="control-btn" onclick="toggleHumidifier(1)">💧 Humidifier</button>
+                            <button class="control-btn" onclick="togglePower(1)">🔌 OFF</button>
                         </div>
                     </div>
 
@@ -530,8 +581,8 @@
                             </div>
                         </div>
                         <div class="container-controls">
-                            <button class="control-btn">💧 Humidifier</button>
-                            <button class="control-btn">🔌 OFF</button>
+                            <button class="control-btn" onclick="toggleHumidifier(2)">💧 Humidifier</button>
+                            <button class="control-btn" onclick="togglePower(2)">🔌 OFF</button>
                         </div>
                     </div>
 
@@ -574,8 +625,8 @@
                             </div>
                         </div>
                         <div class="container-controls">
-                            <button class="control-btn">💧 Humidifier</button>
-                            <button class="control-btn">🔌 OFF</button>
+                            <button class="control-btn" onclick="toggleHumidifier(3)">💧 Humidifier</button>
+                            <button class="control-btn" onclick="togglePower(3)">🔌 OFF</button>
                         </div>
                     </div>
 
@@ -618,8 +669,8 @@
                             </div>
                         </div>
                         <div class="container-controls">
-                            <button class="control-btn">💧 Humidifier</button>
-                            <button class="control-btn">🔌 OFF</button>
+                            <button class="control-btn" onclick="toggleHumidifier(4)">💧 Humidifier</button>
+                            <button class="control-btn" onclick="togglePower(4)">🔌 OFF</button>
                         </div>
                     </div>
                 </div>
@@ -660,24 +711,449 @@
                 </div>
             </div>
         </div>
-    </div>
+
+        <!-- SOIL SENSORS PAGE -->
+        <div class="content-area" id="soil">
+            <div class="section-title">🌱 Soil Sensors</div>
+            <div class="containers-grid">
+                <div class="container-card">
+                    <div class="container-header">
+                        <div class="container-name">Container 1 - Soil</div>
+                        <div class="status-indicator"></div>
+                    </div>
+                    <div class="sensor-grid">
+                        <div class="sensor-box">
+                            <div class="sensor-label">Nitrogen</div>
+                            <div class="sensor-value" id="soil_c1_n">--</div>
+                            <div class="sensor-unit">mg/kg</div>
+                        </div>
+                        <div class="sensor-box">
+                            <div class="sensor-label">Phosphorus</div>
+                            <div class="sensor-value" id="soil_c1_p">--</div>
+                            <div class="sensor-unit">mg/kg</div>
+                        </div>
+                        <div class="sensor-box">
+                            <div class="sensor-label">Potassium</div>
+                            <div class="sensor-value" id="soil_c1_k">--</div>
+                            <div class="sensor-unit">mg/kg</div>
+                        </div>
+                        <div class="sensor-box">
+                            <div class="sensor-label">Moisture</div>
+                            <div class="sensor-value" id="soil_c1_m">--</div>
+                            <div class="sensor-unit">%</div>
+                        </div>
+                        <div class="sensor-box">
+                            <div class="sensor-label">pH Level</div>
+                            <div class="sensor-value" id="soil_c1_ph">--</div>
+                            <div class="sensor-unit"></div>
+                        </div>
+                        <div class="sensor-box">
+                            <div class="sensor-label">Conductivity</div>
+                            <div class="sensor-value" id="soil_c1_ec">--</div>
+                            <div class="sensor-unit">mS/cm</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container-card">
+                    <div class="container-header">
+                        <div class="container-name">Container 2 - Soil</div>
+                        <div class="status-indicator"></div>
+                    </div>
+                    <div class="sensor-grid">
+                        <div class="sensor-box">
+                            <div class="sensor-label">Nitrogen</div>
+                            <div class="sensor-value" id="soil_c2_n">--</div>
+                            <div class="sensor-unit">mg/kg</div>
+                        </div>
+                        <div class="sensor-box">
+                            <div class="sensor-label">Phosphorus</div>
+                            <div class="sensor-value" id="soil_c2_p">--</div>
+                            <div class="sensor-unit">mg/kg</div>
+                        </div>
+                        <div class="sensor-box">
+                            <div class="sensor-label">Potassium</div>
+                            <div class="sensor-value" id="soil_c2_k">--</div>
+                            <div class="sensor-unit">mg/kg</div>
+                        </div>
+                        <div class="sensor-box">
+                            <div class="sensor-label">Moisture</div>
+                            <div class="sensor-value" id="soil_c2_m">--</div>
+                            <div class="sensor-unit">%</div>
+                        </div>
+                        <div class="sensor-box">
+                            <div class="sensor-label">pH Level</div>
+                            <div class="sensor-value" id="soil_c2_ph">--</div>
+                            <div class="sensor-unit"></div>
+                        </div>
+                        <div class="sensor-box">
+                            <div class="sensor-label">Conductivity</div>
+                            <div class="sensor-value" id="soil_c2_ec">--</div>
+                            <div class="sensor-unit">mS/cm</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container-card">
+                    <div class="container-header">
+                        <div class="container-name">Container 3 - Soil</div>
+                        <div class="status-indicator"></div>
+                    </div>
+                    <div class="sensor-grid">
+                        <div class="sensor-box">
+                            <div class="sensor-label">Nitrogen</div>
+                            <div class="sensor-value" id="soil_c3_n">--</div>
+                            <div class="sensor-unit">mg/kg</div>
+                        </div>
+                        <div class="sensor-box">
+                            <div class="sensor-label">Phosphorus</div>
+                            <div class="sensor-value" id="soil_c3_p">--</div>
+                            <div class="sensor-unit">mg/kg</div>
+                        </div>
+                        <div class="sensor-box">
+                            <div class="sensor-label">Potassium</div>
+                            <div class="sensor-value" id="soil_c3_k">--</div>
+                            <div class="sensor-unit">mg/kg</div>
+                        </div>
+                        <div class="sensor-box">
+                            <div class="sensor-label">Moisture</div>
+                            <div class="sensor-value" id="soil_c3_m">--</div>
+                            <div class="sensor-unit">%</div>
+                        </div>
+                        <div class="sensor-box">
+                            <div class="sensor-label">pH Level</div>
+                            <div class="sensor-value" id="soil_c3_ph">--</div>
+                            <div class="sensor-unit"></div>
+                        </div>
+                        <div class="sensor-box">
+                            <div class="sensor-label">Conductivity</div>
+                            <div class="sensor-value" id="soil_c3_ec">--</div>
+                            <div class="sensor-unit">mS/cm</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container-card">
+                    <div class="container-header">
+                        <div class="container-name">Container 4 - Soil</div>
+                        <div class="status-indicator"></div>
+                    </div>
+                    <div class="sensor-grid">
+                        <div class="sensor-box">
+                            <div class="sensor-label">Nitrogen</div>
+                            <div class="sensor-value" id="soil_c4_n">--</div>
+                            <div class="sensor-unit">mg/kg</div>
+                        </div>
+                        <div class="sensor-box">
+                            <div class="sensor-label">Phosphorus</div>
+                            <div class="sensor-value" id="soil_c4_p">--</div>
+                            <div class="sensor-unit">mg/kg</div>
+                        </div>
+                        <div class="sensor-box">
+                            <div class="sensor-label">Potassium</div>
+                            <div class="sensor-value" id="soil_c4_k">--</div>
+                            <div class="sensor-unit">mg/kg</div>
+                        </div>
+                        <div class="sensor-box">
+                            <div class="sensor-label">Moisture</div>
+                            <div class="sensor-value" id="soil_c4_m">--</div>
+                            <div class="sensor-unit">%</div>
+                        </div>
+                        <div class="sensor-box">
+                            <div class="sensor-label">pH Level</div>
+                            <div class="sensor-value" id="soil_c4_ph">--</div>
+                            <div class="sensor-unit"></div>
+                        </div>
+                        <div class="sensor-box">
+                            <div class="sensor-label">Conductivity</div>
+                            <div class="sensor-value" id="soil_c4_ec">--</div>
+                            <div class="sensor-unit">mS/cm</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ENVIRONMENT PAGE -->
+        <div class="content-area" id="environment">
+            <div class="section-title">🌍 Environmental Conditions</div>
+            <div class="climate-system">
+                <div class="climate-grid">
+                    <div class="climate-box">
+                        <div class="climate-title">Temperature Control</div>
+                        <div class="climate-stat">
+                            <span class="climate-stat-label">Current Temp:</span>
+                            <span class="climate-stat-value" id="env_temp">22.5°C</span>
+                        </div>
+                        <div class="climate-stat">
+                            <span class="climate-stat-label">Target Temp:</span>
+                            <span class="climate-stat-value" id="env_temp_target">22.0°C</span>
+                        </div>
+                    </div>
+                    <div class="climate-box">
+                        <div class="climate-title">Humidity Control</div>
+                        <div class="climate-stat">
+                            <span class="climate-stat-label">Current Humidity:</span>
+                            <span class="climate-stat-value" id="env_humidity">65%</span>
+                        </div>
+                        <div class="climate-stat">
+                            <span class="climate-stat-label">Target Humidity:</span>
+                            <span class="climate-stat-value" id="env_humidity_target">65%</span>
+                        </div>
+                    </div>
+                    <div class="climate-box">
+                        <div class="climate-title">Air Quality</div>
+                        <div class="climate-stat">
+                            <span class="climate-stat-label">CO2 Level:</span>
+                            <span class="climate-stat-value" id="env_co2">420 ppm</span>
+                        </div>
+                        <div class="climate-stat">
+                            <span class="climate-stat-label">Air Circulation:</span>
+                            <span class="climate-stat-value" id="env_circulation">Good</span>
+                        </div>
+                    </div>
+                    <div class="climate-box">
+                        <div class="climate-title">Light Intensity</div>
+                        <div class="climate-stat">
+                            <span class="climate-stat-label">Current Lux:</span>
+                            <span class="climate-stat-value" id="env_lux">8500</span>
+                        </div>
+                        <div class="climate-stat">
+                            <span class="climate-stat-label">Active Lights:</span>
+                            <span class="climate-stat-value" id="env_lights">12</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- LIGHTING PAGE -->
+        <div class="content-area" id="lighting">
+            <div class="section-title">💡 Lighting Controls</div>
+            <div class="room-controls">
+                <div class="control-card">
+                    <div class="control-label">Main Lights</div>
+                    <button class="control-btn" onclick="toggleLighting('main')" id="light_main">🔴 OFF</button>
+                </div>
+                <div class="control-card">
+                    <div class="control-label">Growth Lights</div>
+                    <button class="control-btn" onclick="toggleLighting('growth')" id="light_growth">🔴 OFF</button>
+                </div>
+                <div class="control-card">
+                    <div class="control-label">Full Spectrum</div>
+                    <button class="control-btn" onclick="toggleLighting('spectrum')" id="light_spectrum">🔴 OFF</button>
+                </div>
+                <div class="control-card">
+                    <div class="control-label">Photoperiod Manager</div>
+                    <button class="control-btn" onclick="toggleLighting('photoperiod')" id="light_photoperiod">🔴 OFF</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CLIMATE PAGE -->
+        <div class="content-area" id="climate">
+            <div class="section-title">❄️ Climate Control</div>
+            <div class="containers-grid">
+                <div class="container-card">
+                    <div class="container-header">
+                        <div class="container-name">Air Conditioner</div>
+                        <div class="status-indicator"></div>
+                    </div>
+                    <button class="control-btn" onclick="toggleClimate('ac')" id="climate_ac" style="width: 100%; padding: 20px; font-size: 1.2em;">🔴 TURN ON</button>
+                </div>
+                <div class="container-card">
+                    <div class="container-header">
+                        <div class="container-name">Heater</div>
+                        <div class="status-indicator"></div>
+                    </div>
+                    <button class="control-btn" onclick="toggleClimate('heater')" id="climate_heater" style="width: 100%; padding: 20px; font-size: 1.2em;">🔴 TURN ON</button>
+                </div>
+                <div class="container-card">
+                    <div class="container-header">
+                        <div class="container-name">Fan System</div>
+                        <div class="status-indicator"></div>
+                    </div>
+                    <button class="control-btn" onclick="toggleClimate('fan')" id="climate_fan" style="width: 100%; padding: 20px; font-size: 1.2em;">🔴 TURN ON</button>
+                </div>
+                <div class="container-card">
+                    <div class="container-header">
+                        <div class="container-name">Ventilation</div>
+                        <div class="status-indicator"></div>
+                    </div>
+                    <button class="control-btn" onclick="toggleClimate('vent')" id="climate_vent" style="width: 100%; padding: 20px; font-size: 1.2em;">🔴 TURN ON</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- HUMIDIFIERS PAGE -->
+        <div class="content-area" id="humidifiers">
+            <div class="section-title">💧 Humidifier Control</div>
+            <div class="containers-grid">
+                <div class="container-card">
+                    <div class="container-header">
+                        <div class="container-name">Humidifier 1</div>
+                        <div class="status-indicator"></div>
+                    </div>
+                    <button class="control-btn" onclick="toggleHumidifier('h1')" id="humid_h1" style="width: 100%; padding: 20px; font-size: 1.2em;">🔴 TURN ON</button>
+                </div>
+                <div class="container-card">
+                    <div class="container-header">
+                        <div class="container-name">Humidifier 2</div>
+                        <div class="status-indicator"></div>
+                    </div>
+                    <button class="control-btn" onclick="toggleHumidifier('h2')" id="humid_h2" style="width: 100%; padding: 20px; font-size: 1.2em;">🔴 TURN ON</button>
+                </div>
+                <div class="container-card">
+                    <div class="container-header">
+                        <div class="container-name">Humidifier 3</div>
+                        <div class="status-indicator"></div>
+                    </div>
+                    <button class="control-btn" onclick="toggleHumidifier('h3')" id="humid_h3" style="width: 100%; padding: 20px; font-size: 1.2em;">🔴 TURN ON</button>
+                </div>
+                <div class="container-card">
+                    <div class="container-header">
+                        <div class="container-name">Humidifier 4</div>
+                        <div class="status-indicator"></div>
+                    </div>
+                    <button class="control-btn" onclick="toggleHumidifier('h4')" id="humid_h4" style="width: 100%; padding: 20px; font-size: 1.2em;">🔴 TURN ON</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ALERTS PAGE -->
+        <div class="content-area" id="alerts">
+            <div class="section-title">⚠️ System Alerts</div>
+            <div id="alertsList" style="max-width: 600px;">
+                <div class="alert-message success">✓ All systems operating normally</div>
+                <div class="alert-message success">✓ Temperature within optimal range</div>
+                <div class="alert-message success">✓ Humidity levels stable</div>
+            </div>
+        </div>
+
+        <!-- HISTORY PAGE -->
+        <div class="content-area" id="history">
+            <div class="section-title">📈 Historical Data</div>
+            <div class="climate-system">
+                <p style="color: #aaa; padding: 20px; text-align: center;">Historical data will be logged here over time...</p>
+                <div class="climate-grid">
+                    <div class="climate-box">
+                        <div class="climate-title">Temperature History</div>
+                        <div class="climate-stat">
+                            <span class="climate-stat-label">Today Avg:</span>
+                            <span class="climate-stat-value" id="hist_temp_avg">22.3°C</span>
+                        </div>
+                        <div class="climate-stat">
+                            <span class="climate-stat-label">Week Avg:</span>
+                            <span class="climate-stat-value" id="hist_temp_week">22.1°C</span>
+                        </div>
+                    </div>
+                    <div class="climate-box">
+                        <div class="climate-title">Humidity History</div>
+                        <div class="climate-stat">
+                            <span class="climate-stat-label">Today Avg:</span>
+                            <span class="climate-stat-value" id="hist_humid_avg">64.8%</span>
+                        </div>
+                        <div class="climate-stat">
+                            <span class="climate-stat-label">Week Avg:</span>
+                            <span class="climate-stat-value" id="hist_humid_week">65.2%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS PAGE -->
+        <div class="content-area" id="settings">
+            <div class="section-title">⚙️ System Settings</div>
+            <div style="max-width: 500px;">
+                <div class="form-group">
+                    <label>Target Temperature (°C)</label>
+                    <input type="number" id="setting_temp" value="22" min="15" max="30">
+                </div>
+                <div class="form-group">
+                    <label>Target Humidity (%)</label>
+                    <input type="number" id="setting_humidity" value="65" min="30" max="90">
+                </div>
+                <div class="form-group">
+                    <label>Update Interval (seconds)</label>
+                    <input type="number" id="setting_interval" value="60" min="10" max="300">
+                </div>
+                <div class="form-group">
+                    <label>Display Mode</label>
+                    <select id="setting_mode">
+                        <option>Dark Mode</option>
+                        <option>Light Mode</option>
+                    </select>
+                </div>
+                <button class="btn-save" onclick="saveSettings()">💾 Save Settings</button>
+                <div id="settingsMessage"></div>
+            </div>
+        </div>
 
     <script>
-        // Generate random value
+        // State management
+        const state = {
+            humidifiers: {},
+            power: {},
+            lighting: {},
+            climate: {},
+            settings: {
+                tempTarget: 22,
+                humidityTarget: 65,
+                updateInterval: 60000
+            }
+        };
+
+        // Initialize states
+        for (let i = 1; i <= 4; i++) {
+            state.humidifiers[i] = false;
+            state.power[i] = false;
+        }
+        state.lighting = { main: false, growth: false, spectrum: false, photoperiod: false };
+        state.climate = { ac: false, heater: false, fan: false, vent: false };
+
+        // Navigation
+        function navigateTo(page) {
+            // Hide all pages
+            document.querySelectorAll('.content-area').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            
+            // Show selected page
+            const pageEl = document.getElementById(page);
+            if (pageEl) {
+                pageEl.classList.add('active');
+            }
+            
+            // Update nav highlight
+            event.target.classList.add('active');
+            
+            // Update header
+            const titles = {
+                overview: '🌱 Grow Room Control Center',
+                soil: '🌱 Soil Sensors',
+                environment: '🌍 Environmental Conditions',
+                lighting: '💡 Lighting Controls',
+                climate: '❄️ Climate Control',
+                humidifiers: '💧 Humidifier Management',
+                alerts: '⚠️ System Alerts',
+                history: '📈 Historical Data',
+                settings: '⚙️ System Settings'
+            };
+            document.getElementById('pageTitle').textContent = titles[page] || 'Dashboard';
+        }
+
+        // Random value generator
         function randomValue(min, max, decimals = 0) {
             const val = Math.random() * (max - min) + min;
             return decimals > 0 ? val.toFixed(decimals) : Math.round(val);
         }
 
-        // Update all values
+        // Update all sensor values
         function updateAllValues() {
             // Room controls
             document.getElementById('roomTemp').textContent = randomValue(20, 26, 1);
             document.getElementById('roomHumidity').textContent = randomValue(50, 80);
-            document.getElementById('acStatus').textContent = Math.random() > 0.5 ? 'ON' : 'OFF';
-            document.getElementById('activeLights').textContent = randomValue(0, 12);
+            document.getElementById('acStatus').textContent = state.climate.ac ? 'ON' : 'OFF';
+            document.getElementById('activeLights').textContent = Object.values(state.lighting).filter(v => v).length;
 
-            // Containers (all 4)
+            // Containers overview
             for (let c = 1; c <= 4; c++) {
                 document.getElementById(`c${c}_nitrogen`).textContent = randomValue(20, 60);
                 document.getElementById(`c${c}_phosphorus`).textContent = randomValue(15, 50);
@@ -688,7 +1164,7 @@
             }
 
             // Climate system
-            const acStatus = Math.random() > 0.5 ? 'ON' : 'OFF';
+            const acStatus = state.climate.ac ? 'ON' : 'OFF';
             document.getElementById('acBadge').textContent = `Status: ${acStatus}`;
             document.getElementById('acBadge').className = acStatus === 'OFF' ? 'status-badge off' : 'status-badge';
             
@@ -703,23 +1179,75 @@
             document.getElementById('lastUpdate').textContent = now;
         }
 
+        // Button functions
+        function toggleHumidifier(container) {
+            if (typeof container === 'string' && container.startsWith('h')) {
+                // Humidifiers page
+                const id = container;
+                const btn = document.getElementById('humid_' + id);
+                if (btn) {
+                    const isActive = btn.classList.contains('active');
+                    btn.classList.toggle('active');
+                    btn.textContent = isActive ? '🔴 TURN ON' : '🟢 RUNNING';
+                }
+            } else {
+                // Overview page
+                state.humidifiers[container] = !state.humidifiers[container];
+                showAlert(`Humidifier ${container} ${state.humidifiers[container] ? 'started' : 'stopped'}`, true);
+            }
+        }
+
+        function togglePower(container) {
+            state.power[container] = !state.power[container];
+            showAlert(`Container ${container} power ${state.power[container] ? 'ON' : 'OFF'}`, true);
+        }
+
+        function toggleLighting(type) {
+            state.lighting[type] = !state.lighting[type];
+            const btn = document.getElementById('light_' + type);
+            if (btn) {
+                btn.classList.toggle('active');
+                btn.textContent = state.lighting[type] ? '🟢 ON' : '🔴 OFF';
+            }
+        }
+
+        function toggleClimate(type) {
+            state.climate[type] = !state.climate[type];
+            const btn = document.getElementById('climate_' + type);
+            if (btn) {
+                btn.classList.toggle('active');
+                btn.textContent = state.climate[type] ? '🟢 RUNNING' : '🔴 TURN ON';
+            }
+        }
+
+        function showAlert(message, success = false) {
+            const alertsList = document.getElementById('alertsList');
+            if (alertsList) {
+                const alert = document.createElement('div');
+                alert.className = 'alert-message' + (success ? ' success' : '');
+                alert.textContent = success ? '✓ ' + message : '⚠️ ' + message;
+                alertsList.insertBefore(alert, alertsList.firstChild);
+                setTimeout(() => alert.remove(), 5000);
+            }
+        }
+
+        function saveSettings() {
+            state.settings.tempTarget = parseInt(document.getElementById('setting_temp').value);
+            state.settings.humidityTarget = parseInt(document.getElementById('setting_humidity').value);
+            state.settings.updateInterval = parseInt(document.getElementById('setting_interval').value) * 1000;
+            
+            showAlert('Settings saved successfully!', true);
+            
+            // Restart update interval
+            clearInterval(updateInterval);
+            updateInterval = setInterval(updateAllValues, state.settings.updateInterval);
+        }
+
         // Initial load
+        let updateInterval;
         window.addEventListener('load', () => {
             updateAllValues();
-            
-            // Update every 60 seconds (1 minute)
-            setInterval(updateAllValues, 60000);
-        });
-
-        // Add button click handlers
-        document.querySelectorAll('.control-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const prevColor = btn.style.boxShadow;
-                btn.style.boxShadow = '0 0 20px rgba(46, 204, 113, 0.6)';
-                setTimeout(() => {
-                    btn.style.boxShadow = prevColor || '0 0 10px rgba(0, 191, 255, 0.3)';
-                }, 300);
-            });
+            updateInterval = setInterval(updateAllValues, state.settings.updateInterval);
         });
     </script>
 </body>
