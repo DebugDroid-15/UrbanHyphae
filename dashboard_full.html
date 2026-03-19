@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UrbanHyphae - Grow Room Control Center</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0f1419;
+            color: #e0e0e0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 200px;
+            background: linear-gradient(180deg, #1a2332 0%, #141b26 100%);
+            padding: 20px;
+            border-right: 1px solid #2a3a4a;
+            overflow-y: auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            color: #00bfff;
+            font-weight: 700;
+            font-size: 1.2em;
+        }
+
+        .nav-section {
+            margin-bottom: 30px;
+        }
+
+        .nav-section-title {
+            font-size: 0.75em;
+            text-transform: uppercase;
+            color: #888;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .nav-item {
+            padding: 12px 15px;
+            margin-bottom: 5px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95em;
+        }
+
+        .nav-item:hover {
+            background: rgba(0, 191, 255, 0.1);
+            border-left-color: #00bfff;
+        }
+
+        .nav-item.active {
+            background: rgba(0, 191, 255, 0.2);
+            color: #00bfff;
+            border-left-color: #00bfff;
+            font-weight: 600;
+        }
+
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            background: #0f1419;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #1a2332 0%, #141b26 100%);
+            padding: 20px 30px;
+            border-bottom: 1px solid #2a3a4a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            color: #00bfff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-bar {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9em;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #2ecc71;
+            animate: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .content-area {
+            padding: 30px;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            color: #00bfff;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .room-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .control-card {
+            background: linear-gradient(135deg, #1a2f42 0%, #0f1f2e 100%);
+            border: 1px solid #2a4a5a;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .control-label {
+            font-size: 0.85em;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .control-value {
+            font-size: 2.2em;
+            color: #00ffff;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .control-unit {
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        .containers-section {
+            margin-bottom: 40px;
+        }
+
+        .containers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .container-card {
+            background: linear-gradient(135deg, #1a2f42 0%, #0f1f2e 100%);
+            border: 2px solid #00bfff;
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #2a4a5a;
+        }
+
+        .container-name {
+            font-size: 1.2em;
+            color: #00bfff;
+            font-weight: 700;
+            flex: 1;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #2ecc71;
+        }
+
+        .sensor-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .sensor-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #2a4a5a;
+            border-radius: 6px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .sensor-label {
+            font-size: 0.8em;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .sensor-value {
+            font-size: 1.6em;
+            color: #00ff00;
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+
+        .sensor-unit {
+            font-size: 0.75em;
+            color: #666;
+        }
+
+        .container-controls {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #2a4a5a;
+        }
+
+        .control-btn {
+            padding: 10px;
+            border: 1px solid #00bfff;
+            background: rgba(0, 191, 255, 0.1);
+            color: #00bfff;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .control-btn:hover {
+            background: rgba(0, 191, 255, 0.2);
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
+        }
+
+        .climate-system {
+            background: linear-gradient(135deg, #1a2f42 0%, #0f1f2e 100%);
+            border: 1px solid #2a4a5a;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .climate-section-title {
+            font-size: 1.2em;
+            color: #00bfff;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .climate-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .climate-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #2a4a5a;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .climate-title {
+            font-size: 1em;
+            color: #00bfff;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .climate-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #2a4a5a;
+        }
+
+        .climate-stat-label {
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        .climate-stat-value {
+            font-size: 1.3em;
+            color: #00ff00;
+            font-weight: 700;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 5px 12px;
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .status-badge.off {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+        <div class="logo">
+            🍄 UrbanHyphae
+        </div>
+        <div style="font-size: 0.8em; color: #888; margin-bottom: 20px;">Mushroom Growth Monitors</div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">DASHBOARD</div>
+            <div class="nav-item active">
+                <span>📊</span> Overview
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">MONITORING</div>
+            <div class="nav-item">
+                <span>🌱</span> Soil Sensors
+            </div>
+            <div class="nav-item">
+                <span>🌍</span> Environment
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">CONTROLS</div>
+            <div class="nav-item">
+                <span>💡</span> Lighting
+            </div>
+            <div class="nav-item">
+                <span>❄️</span> Climate
+            </div>
+            <div class="nav-item">
+                <span>💧</span> Humidifiers
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">SYSTEM</div>
+            <div class="nav-item">
+                <span>⚠️</span> Alerts
+            </div>
+            <div class="nav-item">
+                <span>📈</span> History
+            </div>
+            <div class="nav-item">
+                <span>⚙️</span> Settings
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+        <!-- HEADER -->
+        <div class="header">
+            <h1>🌱 Grow Room Control Center</h1>
+            <div class="status-bar">
+                <div class="status-item">
+                    <span class="status-dot"></span>
+                    <span id="connectionStatus">Connected</span>
+                </div>
+                <div class="status-item">Last: <span id="lastUpdate">Just now</span></div>
+            </div>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="content-area">
+            <!-- ROOM CONTROLS -->
+            <div class="room-controls">
+                <div class="control-card">
+                    <div class="control-label">Room Temperature</div>
+                    <div class="control-value" id="roomTemp">22.5</div>
+                    <div class="control-unit">°C</div>
+                </div>
+                <div class="control-card">
+                    <div class="control-label">Room Humidity</div>
+                    <div class="control-value" id="roomHumidity">65</div>
+                    <div class="control-unit">%</div>
+                </div>
+                <div class="control-card">
+                    <div class="control-label">AC Status</div>
+                    <div class="control-value" id="acStatus">OFF</div>
+                    <div class="control-unit"></div>
+                </div>
+                <div class="control-card">
+                    <div class="control-label">Active Lights</div>
+                    <div class="control-value" id="activeLights">0</div>
+                    <div class="control-unit">/ 12</div>
+                </div>
+            </div>
+
+            <!-- CONTAINERS SECTION -->
+            <div class="containers-section">
+                <div class="section-title">📦 Containers</div>
+                <div class="containers-grid">
+                    <!-- Container 1 -->
+                    <div class="container-card">
+                        <div class="container-header">
+                            <div class="container-name">Container 1</div>
+                            <div class="status-indicator"></div>
+                        </div>
+                        <div class="sensor-grid">
+                            <div class="sensor-box">
+                                <div class="sensor-label">Nitrogen</div>
+                                <div class="sensor-value" id="c1_nitrogen">--</div>
+                                <div class="sensor-unit">mg/kg</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">Phosphorus</div>
+                                <div class="sensor-value" id="c1_phosphorus">--</div>
+                                <div class="sensor-unit">mg/kg</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">Potassium</div>
+                                <div class="sensor-value" id="c1_potassium">--</div>
+                                <div class="sensor-unit">mg/kg</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">pH</div>
+                                <div class="sensor-value" id="c1_pH">--</div>
+                                <div class="sensor-unit"></div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">EC</div>
+                                <div class="sensor-value" id="c1_EC">--</div>
+                                <div class="sensor-unit">mS/cm</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">Temperature</div>
+                                <div class="sensor-value" id="c1_temperature">--</div>
+                                <div class="sensor-unit">°C</div>
+                            </div>
+                        </div>
+                        <div class="container-controls">
+                            <button class="control-btn">💧 Humidifier</button>
+                            <button class="control-btn">🔌 OFF</button>
+                        </div>
+                    </div>
+
+                    <!-- Container 2 -->
+                    <div class="container-card">
+                        <div class="container-header">
+                            <div class="container-name">Container 2</div>
+                            <div class="status-indicator"></div>
+                        </div>
+                        <div class="sensor-grid">
+                            <div class="sensor-box">
+                                <div class="sensor-label">Nitrogen</div>
+                                <div class="sensor-value" id="c2_nitrogen">--</div>
+                                <div class="sensor-unit">mg/kg</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">Phosphorus</div>
+                                <div class="sensor-value" id="c2_phosphorus">--</div>
+                                <div class="sensor-unit">mg/kg</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">Potassium</div>
+                                <div class="sensor-value" id="c2_potassium">--</div>
+                                <div class="sensor-unit">mg/kg</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">pH</div>
+                                <div class="sensor-value" id="c2_pH">--</div>
+                                <div class="sensor-unit"></div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">EC</div>
+                                <div class="sensor-value" id="c2_EC">--</div>
+                                <div class="sensor-unit">mS/cm</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">Temperature</div>
+                                <div class="sensor-value" id="c2_temperature">--</div>
+                                <div class="sensor-unit">°C</div>
+                            </div>
+                        </div>
+                        <div class="container-controls">
+                            <button class="control-btn">💧 Humidifier</button>
+                            <button class="control-btn">🔌 OFF</button>
+                        </div>
+                    </div>
+
+                    <!-- Container 3 -->
+                    <div class="container-card">
+                        <div class="container-header">
+                            <div class="container-name">Container 3</div>
+                            <div class="status-indicator"></div>
+                        </div>
+                        <div class="sensor-grid">
+                            <div class="sensor-box">
+                                <div class="sensor-label">Nitrogen</div>
+                                <div class="sensor-value" id="c3_nitrogen">--</div>
+                                <div class="sensor-unit">mg/kg</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">Phosphorus</div>
+                                <div class="sensor-value" id="c3_phosphorus">--</div>
+                                <div class="sensor-unit">mg/kg</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">Potassium</div>
+                                <div class="sensor-value" id="c3_potassium">--</div>
+                                <div class="sensor-unit">mg/kg</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">pH</div>
+                                <div class="sensor-value" id="c3_pH">--</div>
+                                <div class="sensor-unit"></div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">EC</div>
+                                <div class="sensor-value" id="c3_EC">--</div>
+                                <div class="sensor-unit">mS/cm</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">Temperature</div>
+                                <div class="sensor-value" id="c3_temperature">--</div>
+                                <div class="sensor-unit">°C</div>
+                            </div>
+                        </div>
+                        <div class="container-controls">
+                            <button class="control-btn">💧 Humidifier</button>
+                            <button class="control-btn">🔌 OFF</button>
+                        </div>
+                    </div>
+
+                    <!-- Container 4 -->
+                    <div class="container-card">
+                        <div class="container-header">
+                            <div class="container-name">Container 4</div>
+                            <div class="status-indicator"></div>
+                        </div>
+                        <div class="sensor-grid">
+                            <div class="sensor-box">
+                                <div class="sensor-label">Nitrogen</div>
+                                <div class="sensor-value" id="c4_nitrogen">--</div>
+                                <div class="sensor-unit">mg/kg</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">Phosphorus</div>
+                                <div class="sensor-value" id="c4_phosphorus">--</div>
+                                <div class="sensor-unit">mg/kg</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">Potassium</div>
+                                <div class="sensor-value" id="c4_potassium">--</div>
+                                <div class="sensor-unit">mg/kg</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">pH</div>
+                                <div class="sensor-value" id="c4_pH">--</div>
+                                <div class="sensor-unit"></div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">EC</div>
+                                <div class="sensor-value" id="c4_EC">--</div>
+                                <div class="sensor-unit">mS/cm</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">Temperature</div>
+                                <div class="sensor-value" id="c4_temperature">--</div>
+                                <div class="sensor-unit">°C</div>
+                            </div>
+                        </div>
+                        <div class="container-controls">
+                            <button class="control-btn">💧 Humidifier</button>
+                            <button class="control-btn">🔌 OFF</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CLIMATE CONTROL SYSTEM -->
+            <div class="climate-system">
+                <div class="climate-section-title">❄️ Climate Control System</div>
+                <div class="climate-grid">
+                    <div class="climate-box">
+                        <div class="climate-title">Air Conditioner</div>
+                        <div class="status-badge off" id="acBadge">Status: OFF</div>
+                        <div class="climate-stat">
+                            <span class="climate-stat-label">Current Temp:</span>
+                            <span class="climate-stat-value" id="acTemp">22.5°C</span>
+                        </div>
+                        <div class="climate-stat">
+                            <span class="climate-stat-label">Target Temp:</span>
+                            <span class="climate-stat-value" id="acTarget">20°C</span>
+                        </div>
+                    </div>
+
+                    <div class="climate-box">
+                        <div class="climate-title">Room Conditions</div>
+                        <div class="climate-stat">
+                            <span class="climate-stat-label">Temperature:</span>
+                            <span class="climate-stat-value" id="roomCondTemp">22.5°C</span>
+                        </div>
+                        <div class="climate-stat">
+                            <span class="climate-stat-label">Humidity:</span>
+                            <span class="climate-stat-value" id="roomCondHumidity">65%</span>
+                        </div>
+                        <div class="climate-stat">
+                            <span class="climate-stat-label">CO2 Level:</span>
+                            <span class="climate-stat-value" id="co2Level">420</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Generate random value
+        function randomValue(min, max, decimals = 0) {
+            const val = Math.random() * (max - min) + min;
+            return decimals > 0 ? val.toFixed(decimals) : Math.round(val);
+        }
+
+        // Update all values
+        function updateAllValues() {
+            // Room controls
+            document.getElementById('roomTemp').textContent = randomValue(20, 26, 1);
+            document.getElementById('roomHumidity').textContent = randomValue(50, 80);
+            document.getElementById('acStatus').textContent = Math.random() > 0.5 ? 'ON' : 'OFF';
+            document.getElementById('activeLights').textContent = randomValue(0, 12);
+
+            // Containers (all 4)
+            for (let c = 1; c <= 4; c++) {
+                document.getElementById(`c${c}_nitrogen`).textContent = randomValue(20, 60);
+                document.getElementById(`c${c}_phosphorus`).textContent = randomValue(15, 50);
+                document.getElementById(`c${c}_potassium`).textContent = randomValue(30, 70);
+                document.getElementById(`c${c}_pH`).textContent = randomValue(6.0, 7.5, 1);
+                document.getElementById(`c${c}_EC`).textContent = randomValue(1.0, 3.0, 1);
+                document.getElementById(`c${c}_temperature`).textContent = randomValue(18, 28, 1);
+            }
+
+            // Climate system
+            const acStatus = Math.random() > 0.5 ? 'ON' : 'OFF';
+            document.getElementById('acBadge').textContent = `Status: ${acStatus}`;
+            document.getElementById('acBadge').className = acStatus === 'OFF' ? 'status-badge off' : 'status-badge';
+            
+            document.getElementById('acTemp').textContent = randomValue(18, 26, 1) + '°C';
+            document.getElementById('acTarget').textContent = randomValue(16, 22) + '°C';
+            document.getElementById('roomCondTemp').textContent = randomValue(20, 26, 1) + '°C';
+            document.getElementById('roomCondHumidity').textContent = randomValue(50, 80) + '%';
+            document.getElementById('co2Level').textContent = randomValue(350, 550);
+
+            // Update timestamp
+            const now = new Date().toLocaleTimeString();
+            document.getElementById('lastUpdate').textContent = now;
+        }
+
+        // Initial load
+        window.addEventListener('load', () => {
+            updateAllValues();
+            
+            // Update every 60 seconds (1 minute)
+            setInterval(updateAllValues, 60000);
+        });
+
+        // Add button click handlers
+        document.querySelectorAll('.control-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const prevColor = btn.style.boxShadow;
+                btn.style.boxShadow = '0 0 20px rgba(46, 204, 113, 0.6)';
+                setTimeout(() => {
+                    btn.style.boxShadow = prevColor || '0 0 10px rgba(0, 191, 255, 0.3)';
+                }, 300);
+            });
+        });
+    </script>
+</body>
+</html>
