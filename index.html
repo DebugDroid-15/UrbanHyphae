@@ -1163,6 +1163,35 @@
                 document.getElementById(`c${c}_temperature`).textContent = randomValue(18, 28, 1);
             }
 
+            // Soil sensors page - ALL containers
+            for (let c = 1; c <= 4; c++) {
+                try {
+                    document.getElementById(`soil_c${c}_n`).textContent = randomValue(20, 60);
+                    document.getElementById(`soil_c${c}_p`).textContent = randomValue(15, 50);
+                    document.getElementById(`soil_c${c}_k`).textContent = randomValue(30, 70);
+                    document.getElementById(`soil_c${c}_m`).textContent = randomValue(30, 80);
+                    document.getElementById(`soil_c${c}_ph`).textContent = randomValue(6.0, 7.5, 1);
+                    document.getElementById(`soil_c${c}_ec`).textContent = randomValue(1.0, 3.0, 1);
+                } catch(e) {}
+            }
+
+            // Environment page
+            try {
+                document.getElementById('env_temp').textContent = randomValue(20, 26, 1) + '°C';
+                document.getElementById('env_humidity').textContent = randomValue(50, 80) + '%';
+                document.getElementById('env_co2').textContent = randomValue(350, 550) + ' ppm';
+                document.getElementById('env_lux').textContent = randomValue(7000, 10000);
+                document.getElementById('env_circulation').textContent = ['Good', 'Excellent', 'Optimal'][Math.floor(Math.random() * 3)];
+            } catch(e) {}
+
+            // History page
+            try {
+                document.getElementById('hist_temp_avg').textContent = randomValue(20, 25, 1) + '°C';
+                document.getElementById('hist_temp_week').textContent = randomValue(20, 25, 1) + '°C';
+                document.getElementById('hist_humid_avg').textContent = randomValue(60, 70) + '%';
+                document.getElementById('hist_humid_week').textContent = randomValue(60, 70) + '%';
+            } catch(e) {}
+
             // Climate system
             const acStatus = state.climate.ac ? 'ON' : 'OFF';
             document.getElementById('acBadge').textContent = `Status: ${acStatus}`;
