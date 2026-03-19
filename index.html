@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Urban Hyphae - Mushroom Farm</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>UrbanHyphae - Grow Room Control Center</title>
     <style>
         * {
             margin: 0;
@@ -14,62 +13,50 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: #ecf0f1;
+            background: #0f1419;
+            color: #e0e0e0;
             display: flex;
             min-height: 100vh;
         }
 
-        /* Sidebar Navigation */
         .sidebar {
-            width: 260px;
-            background: linear-gradient(135deg, #0f3460 0%, #16213e 100%);
+            width: 200px;
+            background: linear-gradient(180deg, #1a2332 0%, #141b26 100%);
             padding: 20px;
-            box-shadow: 2px 0 15px rgba(0,0,0,0.3);
+            border-right: 1px solid #2a3a4a;
             overflow-y: auto;
-            position: fixed;
-            height: 100vh;
-            z-index: 1000;
         }
 
         .logo {
-            text-align: center;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #00d4ff;
-        }
-
-        .logo h1 {
-            font-size: 1.5em;
-            color: #00d4ff;
-            margin-bottom: 5px;
-        }
-
-        .logo p {
-            font-size: 0.85em;
-            color: #7f8c8d;
+            color: #00bfff;
+            font-weight: 700;
+            font-size: 1.2em;
         }
 
         .nav-section {
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
 
         .nav-section-title {
-            font-size: 0.8em;
+            font-size: 0.75em;
             text-transform: uppercase;
-            color: #95a5a6;
-            margin-bottom: 10px;
+            color: #888;
             letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 700;
         }
 
         .nav-item {
             padding: 12px 15px;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
+            border-radius: 6px;
             cursor: pointer;
-            border-left: 3px solid transparent;
-            background: rgba(255,255,255,0.05);
-            border-radius: 4px;
             transition: all 0.3s ease;
+            border-left: 3px solid transparent;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -77,1970 +64,662 @@
         }
 
         .nav-item:hover {
-            background: rgba(0,212,255,0.15);
-            border-left-color: #00d4ff;
+            background: rgba(0, 191, 255, 0.1);
+            border-left-color: #00bfff;
         }
 
         .nav-item.active {
-            background: rgba(0,212,255,0.25);
-            border-left-color: #00d4ff;
-            color: #00d4ff;
+            background: rgba(0, 191, 255, 0.2);
+            color: #00bfff;
+            border-left-color: #00bfff;
+            font-weight: 600;
         }
 
-        .nav-icon {
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            background: #0f1419;
+        }
+
+        .header {
+            background: linear-gradient(90deg, #1a2332 0%, #141b26 100%);
+            padding: 20px 30px;
+            border-bottom: 1px solid #2a3a4a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 1.8em;
+            color: #00bfff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-bar {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9em;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #2ecc71;
+            animate: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .content-area {
+            padding: 30px;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            color: #00bfff;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .room-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .control-card {
+            background: linear-gradient(135deg, #1a2f42 0%, #0f1f2e 100%);
+            border: 1px solid #2a4a5a;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .control-label {
+            font-size: 0.85em;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .control-value {
+            font-size: 2.2em;
+            color: #00ffff;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .control-unit {
+            font-size: 0.8em;
+            color: #666;
+        }
+
+        .containers-section {
+            margin-bottom: 40px;
+        }
+
+        .containers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .container-card {
+            background: linear-gradient(135deg, #1a2f42 0%, #0f1f2e 100%);
+            border: 2px solid #00bfff;
+            border-radius: 10px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #2a4a5a;
+        }
+
+        .container-name {
             font-size: 1.2em;
-            min-width: 25px;
+            color: #00bfff;
+            font-weight: 700;
+            flex: 1;
         }
 
         .status-indicator {
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            margin-left: auto;
-            background: #95a5a6;
-        }
-
-        .status-indicator.online {
             background: #2ecc71;
-            box-shadow: 0 0 8px #2ecc71;
         }
 
-        /* Main Content */
-        .main-content {
-            margin-left: 260px;
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            background: rgba(255,255,255,0.05);
-            padding: 20px;
-            border-radius: 10px;
-            border: 1px solid rgba(0,212,255,0.2);
-        }
-
-        .header h1 {
-            font-size: 2em;
-            color: #00d4ff;
-        }
-
-        .header-info {
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-
-        .stat-block {
-            background: rgba(0,212,255,0.1);
-            padding: 10px 15px;
-            border-radius: 5px;
-            border-left: 3px solid #00d4ff;
-            transition: all 0.3s ease;
-        }
-
-        .stat-block.connected {
-            background: rgba(0,212,255,0.1);
-            border-left-color: #00d4ff;
-        }
-
-        .stat-block.disconnected {
-            background: rgba(231,76,60,0.1);
-            border-left-color: #e74c3c;
-        }
-
-        .stat-block strong {
-            color: #00d4ff;
-        }
-
-        .stat-block.disconnected strong {
-            color: #e74c3c;
-        }
-
-        /* Grid Layout */
-        .container-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        /* Card Styles */
-        .card {
-            background: linear-gradient(135deg, rgba(15,52,96,0.5) 0%, rgba(22,33,62,0.5) 100%);
-            border: 1px solid rgba(0,212,255,0.2);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-            backdrop-filter: blur(10px);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 15px;
-            border-bottom: 1px solid rgba(0,212,255,0.1);
-        }
-
-        .card-title {
-            font-size: 1.2em;
-            color: #00d4ff;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .card-icon {
-            font-size: 1.5em;
-        }
-
-        .sensor-reading {
+        .sensor-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-bottom: 15px;
+            gap: 15px;
         }
 
-        .reading-item {
-            background: rgba(255,255,255,0.05);
-            padding: 12px;
-            border-radius: 5px;
-            text-align: center;
-            border-left: 3px solid #00d4ff;
-        }
-
-        .reading-label {
-            font-size: 0.85em;
-            color: #95a5a6;
-            margin-bottom: 5px;
-        }
-
-        .reading-value {
-            font-size: 1.5em;
-            color: #2ecc71;
-            font-weight: bold;
-        }
-
-        .reading-unit {
-            font-size: 0.8em;
-            color: #7f8c8d;
-            margin-left: 3px;
-        }
-
-        .reading-status {
-            font-size: 0.75em;
-            margin-top: 3px;
-            padding: 3px 8px;
-            background: rgba(46,204,113,0.2);
-            border-radius: 3px;
-            color: #2ecc71;
-            display: inline-block;
-        }
-
-        /* Control Panel */
-        .control-panel {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .control-btn {
-            flex: 1;
-            min-width: 100px;
-            padding: 10px 15px;
-            border: 1px solid rgba(0,212,255,0.3);
-            background: rgba(0,212,255,0.1);
-            color: #00d4ff;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-        }
-
-        .control-btn:hover {
-            background: rgba(0,212,255,0.25);
-            box-shadow: 0 0 15px rgba(0,212,255,0.3);
-        }
-
-        .control-btn.active {
-            background: #2ecc71;
-            border-color: #2ecc71;
-            color: #fff;
-        }
-
-        .control-btn.danger {
-            background: rgba(231,76,60,0.1);
-            border-color: rgba(231,76,60,0.3);
-            color: #e74c3c;
-        }
-
-        .control-btn.danger:hover {
-            background: rgba(231,76,60,0.25);
-        }
-
-        /* Lights Grid */
-        .lights-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-        }
-
-        .light-control {
-            background: rgba(255,255,255,0.05);
-            border: 2px solid rgba(0,212,255,0.2);
+        .sensor-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #2a4a5a;
+            border-radius: 6px;
             padding: 15px;
-            border-radius: 8px;
             text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
         }
 
-        .light-control:hover {
-            border-color: #00d4ff;
-            background: rgba(0,212,255,0.1);
-        }
-
-        .light-control.on {
-            border-color: #f39c12;
-            background: rgba(243,156,18,0.2);
-            box-shadow: 0 0 15px rgba(243,156,18,0.3);
-        }
-
-        .light-control.off .light-icon {
-            opacity: 0.3;
-            filter: grayscale(100%);
-        }
-
-        .light-icon {
-            transition: all 0.3s ease;
-            font-size: 2.5em;
+        .sensor-label {
+            font-size: 0.8em;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             margin-bottom: 8px;
         }
 
-        .light-label {
-            font-size: 0.85em;
-            color: #95a5a6;
-        }
-
-        /* AC Control */
-        .ac-control {
-            background: rgba(52,152,219,0.1);
-            border: 2px solid rgba(52,152,219,0.3);
-            border-radius: 8px;
-            padding: 15px;
-        }
-
-        .ac-status {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .ac-icon {
-            font-size: 2em;
-        }
-
-        .ac-info {
-            flex: 1;
-            margin-left: 15px;
-        }
-
-        .ac-info p {
-            margin: 3px 0;
-            font-size: 0.9em;
-        }
-
-        .ac-threshold {
-            font-size: 0.85em;
-            color: #95a5a6;
-        }
-
-        .ac-toggle {
-            padding: 8px 15px;
-            background: rgba(52,152,219,0.2);
-            border: 1px solid #3498db;
-            color: #3498db;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        /* Charts */
-        .charts-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 20px;
-            margin-bottom: 30px;
-        }
-
-        .chart-container {
-            background: rgba(15,52,96,0.5);
-            border: 1px solid rgba(0,212,255,0.2);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-        }
-
-        .chart-title {
-            color: #00d4ff;
-            margin-bottom: 15px;
-            font-weight: 600;
-        }
-
-        /* Alerts */
-        .alerts-section {
-            background: rgba(15,52,96,0.5);
-            border: 1px solid rgba(0,212,255,0.2);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-
-        .alert-item {
-            background: rgba(231,76,60,0.1);
-            border-left: 4px solid #e74c3c;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            display: flex;
-            gap: 15px;
-            align-items: flex-start;
-        }
-
-        .alert-item.warning {
-            background: rgba(241,196,15,0.1);
-            border-left-color: #f39c12;
-        }
-
-        .alert-item.success {
-            background: rgba(46,204,113,0.1);
-            border-left-color: #2ecc71;
-        }
-
-        .alert-icon {
-            font-size: 1.3em;
-            min-width: 25px;
-        }
-
-        .alert-content {
-            flex: 1;
-        }
-
-        .alert-title {
-            font-weight: 600;
+        .sensor-value {
+            font-size: 1.6em;
+            color: #00ff00;
+            font-weight: 700;
             margin-bottom: 3px;
         }
 
-        .alert-time {
-            font-size: 0.85em;
-            color: #95a5a6;
+        .sensor-unit {
+            font-size: 0.75em;
+            color: #666;
         }
 
-        /* Environment Overview */
-        .env-overview {
+        .container-controls {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #2a4a5a;
         }
 
-        .env-card {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(0,212,255,0.2);
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-        }
-
-        .env-label {
+        .control-btn {
+            padding: 10px;
+            border: 1px solid #00bfff;
+            background: rgba(0, 191, 255, 0.1);
+            color: #00bfff;
+            border-radius: 6px;
+            cursor: pointer;
             font-size: 0.85em;
-            color: #95a5a6;
-            margin-bottom: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .env-value {
-            font-size: 2em;
-            color: #00d4ff;
-            font-weight: bold;
+        .control-btn:hover {
+            background: rgba(0, 191, 255, 0.2);
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.3);
         }
 
-        .env-unit {
-            font-size: 0.8em;
-            color: #7f8c8d;
+        .climate-system {
+            background: linear-gradient(135deg, #1a2f42 0%, #0f1f2e 100%);
+            border: 1px solid #2a4a5a;
+            border-radius: 10px;
+            padding: 25px;
+            margin-top: 30px;
         }
 
-        /* Responsive */
-        @media (max-width: 1024px) {
-            .sidebar {
-                width: 200px;
-            }
-            .main-content {
-                margin-left: 200px;
-            }
-            .lights-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
+        .climate-section-title {
+            font-size: 1.2em;
+            color: #00bfff;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        @media (max-width: 768px) {
-            body {
-                flex-direction: column;
-            }
-            .sidebar {
-                width: 100%;
-                height: auto;
-                position: relative;
-            }
-            .main-content {
-                margin-left: 0;
-            }
-            .container-grid {
-                grid-template-columns: 1fr;
-            }
-            .lights-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .header {
-                flex-direction: column;
-                text-align: center;
-            }
+        .climate-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
         }
 
-        /* Status color codes */
-        .critical { color: #e74c3c; }
-        .warning { color: #f39c12; }
-        .good { color: #2ecc71; }
+        .climate-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #2a4a5a;
+            border-radius: 8px;
+            padding: 20px;
+        }
 
-        /* Loading/Spinner */
-        .spinner {
+        .climate-title {
+            font-size: 1em;
+            color: #00bfff;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .climate-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #2a4a5a;
+        }
+
+        .climate-stat-label {
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        .climate-stat-value {
+            font-size: 1.3em;
+            color: #00ff00;
+            font-weight: 700;
+        }
+
+        .status-badge {
             display: inline-block;
-            width: 15px;
-            height: 15px;
-            border: 2px solid rgba(0,212,255,0.2);
-            border-top-color: #00d4ff;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
+            padding: 5px 12px;
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-bottom: 10px;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .status-badge.off {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
         }
     </style>
 </head>
 <body>
-    <!-- Sidebar -->
+    <!-- SIDEBAR -->
     <div class="sidebar">
         <div class="logo">
-            <h1>🌾 UrbanHyphae</h1>
-            <p>Mushroom Growth Monitors</p>
+            🍄 UrbanHyphae
         </div>
+        <div style="font-size: 0.8em; color: #888; margin-bottom: 20px;">Mushroom Growth Monitors</div>
 
         <div class="nav-section">
-            <div class="nav-section-title">Dashboard</div>
-            <div class="nav-item active" onclick="switchPage('overview')">
-                <span class="nav-icon">📊</span>
-                <span>Overview</span>
-                <div class="status-indicator online"></div>
-            </div>
-            <div class="nav-item" onclick="switchPage('sensors')">
-                <span class="nav-icon">🌱</span>
-                <span>Soil Sensors</span>
-            </div>
-            <div class="nav-item" onclick="switchPage('environment')">
-                <span class="nav-icon">🌡️</span>
-                <span>Environment</span>
+            <div class="nav-section-title">DASHBOARD</div>
+            <div class="nav-item active">
+                <span>📊</span> Overview
             </div>
         </div>
 
         <div class="nav-section">
-            <div class="nav-section-title">Controls</div>
-            <div class="nav-item" onclick="switchPage('lights')">
-                <span class="nav-icon">💡</span>
-                <span>Lighting</span>
+            <div class="nav-section-title">MONITORING</div>
+            <div class="nav-item">
+                <span>🌱</span> Soil Sensors
             </div>
-            <div class="nav-item" onclick="switchPage('climate')">
-                <span class="nav-icon">❄️</span>
-                <span>Climate</span>
-            </div>
-            <div class="nav-item" onclick="switchPage('humidifiers')">
-                <span class="nav-icon">💧</span>
-                <span>Humidifiers</span>
+            <div class="nav-item">
+                <span>🌍</span> Environment
             </div>
         </div>
 
         <div class="nav-section">
-            <div class="nav-section-title">System</div>
-            <div class="nav-item" onclick="switchPage('alerts')">
-                <span class="nav-icon">🔔</span>
-                <span>Alerts</span>
+            <div class="nav-section-title">CONTROLS</div>
+            <div class="nav-item">
+                <span>💡</span> Lighting
             </div>
-            <div class="nav-item" onclick="switchPage('history')">
-                <span class="nav-icon">📈</span>
-                <span>History</span>
+            <div class="nav-item">
+                <span>❄️</span> Climate
             </div>
-            <div class="nav-item" onclick="switchPage('settings')">
-                <span class="nav-icon">⚙️</span>
-                <span>Settings</span>
+            <div class="nav-item">
+                <span>💧</span> Humidifiers
+            </div>
+        </div>
+
+        <div class="nav-section">
+            <div class="nav-section-title">SYSTEM</div>
+            <div class="nav-item">
+                <span>⚠️</span> Alerts
+            </div>
+            <div class="nav-item">
+                <span>📈</span> History
+            </div>
+            <div class="nav-item">
+                <span>⚙️</span> Settings
             </div>
         </div>
     </div>
 
-    <!-- Main Content -->
+    <!-- MAIN CONTENT -->
     <div class="main-content">
-        <!-- Overview Page -->
-        <div id="overview" class="page" style="display: block;">
-            <div class="header">
-                <div>
-                    <h1>Grow Room Control Center</h1>
+        <!-- HEADER -->
+        <div class="header">
+            <h1>🌱 Grow Room Control Center</h1>
+            <div class="status-bar">
+                <div class="status-item">
+                    <span class="status-dot"></span>
+                    <span id="connectionStatus">Connected</span>
                 </div>
-                <div class="header-info">
-                    <div class="stat-block connected">
-                        <strong id="systemStatus">● Connected</strong>
-                    </div>
-                    <div class="stat-block">
-                        <strong id="lastUpdate">Last: Just now</strong>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Environment Overview -->
-            <div class="env-overview">
-                <div class="env-card">
-                    <div class="env-label">Room Temperature</div>
-                    <div class="env-value" id="roomTemp">--</div>
-                    <div class="env-unit">°C</div>
-                </div>
-                <div class="env-card">
-                    <div class="env-label">Room Humidity</div>
-                    <div class="env-value" id="roomHumidity">--</div>
-                    <div class="env-unit">%</div>
-                </div>
-                <div class="env-card">
-                    <div class="env-label">AC Status</div>
-                    <div class="env-value" id="acStatus" style="font-size: 1.5em;">⏸️</div>
-                </div>
-                <div class="env-card">
-                    <div class="env-label">Active Lights</div>
-                    <div class="env-value" id="activeLights">0</div>
-                    <div class="env-unit">/ 12</div>
-                </div>
-            </div>
-
-            <!-- Containers Grid -->
-            <div class="container-grid">
-                <!-- Container 1 -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <span class="card-icon">📦</span>
-                            Container 1
-                        </div>
-                        <div class="status-indicator online"></div>
-                    </div>
-                    <div class="sensor-reading">
-                        <div class="reading-item">
-                            <div class="reading-label">Nitrogen</div>
-                            <div class="reading-value" id="sensor1_n">--</div>
-                            <div class="reading-unit">mg/kg</div>
-                            <div class="reading-status" id="sensor1_n_status">--</div>
-                        </div>
-                        <div class="reading-item">
-                            <div class="reading-label">Phosphorus</div>
-                            <div class="reading-value" id="sensor1_p">--</div>
-                            <div class="reading-unit">mg/kg</div>
-                        </div>
-                        <div class="reading-item">
-                            <div class="reading-label">Potassium</div>
-                            <div class="reading-value" id="sensor1_k">--</div>
-                            <div class="reading-unit">mg/kg</div>
-                        </div>
-                        <div class="reading-item">
-                            <div class="reading-label">pH</div>
-                            <div class="reading-value" id="sensor1_ph">--</div>
-                        </div>
-                        <div class="reading-item">
-                            <div class="reading-label">EC</div>
-                            <div class="reading-value" id="sensor1_ec">--</div>
-                            <div class="reading-unit">mS/cm</div>
-                        </div>
-                        <div class="reading-item">
-                            <div class="reading-label">Temperature</div>
-                            <div class="reading-value" id="sensor1_temp">--</div>
-                            <div class="reading-unit">°C</div>
-                        </div>
-                    </div>
-                    <div class="control-panel">
-                        <button class="control-btn" onclick="toggleHumidifier(1)">💧 Humidifier</button>
-                        <button class="control-btn" onclick="toggleContainer(1)" id="container1_status">⚫ OFF</button>
-                    </div>
-                </div>
-
-                <!-- Container 2 -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <span class="card-icon">📦</span>
-                            Container 2
-                        </div>
-                        <div class="status-indicator online"></div>
-                    </div>
-                    <div class="sensor-reading">
-                        <div class="reading-item">
-                            <div class="reading-label">Nitrogen</div>
-                            <div class="reading-value" id="sensor2_n">--</div>
-                            <div class="reading-unit">mg/kg</div>
-                        </div>
-                        <div class="reading-item">
-                            <div class="reading-label">Phosphorus</div>
-                            <div class="reading-value" id="sensor2_p">--</div>
-                            <div class="reading-unit">mg/kg</div>
-                        </div>
-                        <div class="reading-item">
-                            <div class="reading-label">Potassium</div>
-                            <div class="reading-value" id="sensor2_k">--</div>
-                            <div class="reading-unit">mg/kg</div>
-                        </div>
-                        <div class="reading-item">
-                            <div class="reading-label">pH</div>
-                            <div class="reading-value" id="sensor2_ph">--</div>
-                        </div>
-                        <div class="reading-item">
-                            <div class="reading-label">EC</div>
-                            <div class="reading-value" id="sensor2_ec">--</div>
-                            <div class="reading-unit">mS/cm</div>
-                        </div>
-                        <div class="reading-item">
-                            <div class="reading-label">Temperature</div>
-                            <div class="reading-value" id="sensor2_temp">--</div>
-                            <div class="reading-unit">°C</div>
-                        </div>
-                    </div>
-                    <div class="control-panel">
-                        <button class="control-btn" onclick="toggleHumidifier(2)">💧 Humidifier</button>
-                        <button class="control-btn" onclick="toggleContainer(2)" id="container2_status">⚫ OFF</button>
-                    </div>
-                </div>
-
-                <!-- Container 3 -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <span class="card-icon">📦</span>
-                            Container 3
-                        </div>
-                        <div class="status-indicator online"></div>
-                    </div>
-                    <div class="sensor-reading">
-                        <div class="reading-item">
-                            <div class="reading-label">Nitrogen</div>
-                            <div class="reading-value" id="sensor3_n">--</div>
-                            <div class="reading-unit">mg/kg</div>
-                        </div>
-                        <div class="reading-item">
-                            <div class="reading-label">Phosphorus</div>
-                            <div class="reading-value" id="sensor3_p">--</div>
-                            <div class="reading-unit">mg/kg</div>
-                        </div>
-                        <div class="reading-item">
-                            <div class="reading-label">Potassium</div>
-                            <div class="reading-value" id="sensor3_k">--</div>
-                            <div class="reading-unit">mg/kg</div>
-                        </div>
-                        <div class="reading-item">
-                            <div class="reading-label">pH</div>
-                            <div class="reading-value" id="sensor3_ph">--</div>
-                        </div>
-                        <div class="reading-item">
-                            <div class="reading-label">EC</div>
-                            <div class="reading-value" id="sensor3_ec">--</div>
-                            <div class="reading-unit">mS/cm</div>
-                        </div>
-                        <div class="reading-item">
-                            <div class="reading-label">Temperature</div>
-                            <div class="reading-value" id="sensor3_temp">--</div>
-                            <div class="reading-unit">°C</div>
-                        </div>
-                    </div>
-                    <div class="control-panel">
-                        <button class="control-btn" onclick="toggleHumidifier(3)">💧 Humidifier</button>
-                        <button class="control-btn" onclick="toggleContainer(3)" id="container3_status">⚫ OFF</button>
-                    </div>
-                </div>
-
-                <!-- Container 4 -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <span class="card-icon">📦</span>
-                            Container 4
-                        </div>
-                        <div class="status-indicator online"></div>
-                    </div>
-                    <div class="sensor-reading">
-                        <div class="reading-item">
-                            <div class="reading-label">Nitrogen</div>
-                            <div class="reading-value" id="sensor4_n">--</div>
-                            <div class="reading-unit">mg/kg</div>
-                        </div>
-                        <div class="reading-item">
-                            <div class="reading-label">Phosphorus</div>
-                            <div class="reading-value" id="sensor4_p">--</div>
-                            <div class="reading-unit">mg/kg</div>
-                        </div>
-                        <div class="reading-item">
-                            <div class="reading-label">Potassium</div>
-                            <div class="reading-value" id="sensor4_k">--</div>
-                            <div class="reading-unit">mg/kg</div>
-                        </div>
-                        <div class="reading-item">
-                            <div class="reading-label">pH</div>
-                            <div class="reading-value" id="sensor4_ph">--</div>
-                        </div>
-                        <div class="reading-item">
-                            <div class="reading-label">EC</div>
-                            <div class="reading-value" id="sensor4_ec">--</div>
-                            <div class="reading-unit">mS/cm</div>
-                        </div>
-                        <div class="reading-item">
-                            <div class="reading-label">Temperature</div>
-                            <div class="reading-value" id="sensor4_temp">--</div>
-                            <div class="reading-unit">°C</div>
-                        </div>
-                    </div>
-                    <div class="control-panel">
-                        <button class="control-btn" onclick="toggleHumidifier(4)">💧 Humidifier</button>
-                        <button class="control-btn" onclick="toggleContainer(4)" id="container4_status">⚫ OFF</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Climate Control Card -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <span class="card-icon">❄️</span>
-                        Climate Control System
-                    </div>
-                </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                    <!-- AC Control -->
-                    <div class="ac-control">
-                        <div class="ac-status">
-                            <div style="display: flex;width: 100%;">
-                                <div class="ac-icon">❄️</div>
-                                <div class="ac-info">
-                                    <p><strong>Air Conditioner</strong></p>
-                                    <p class="ac-threshold" id="ac_status_text">Status: OFF</p>
-                                    <p class="ac-threshold">Thresholds: 24°C - 28°C / 60% - 70%</p>
-                                </div>
-                            </div>
-                        </div>
-                        <button class="ac-toggle" onclick="toggleAC()">Toggle AC</button>
-                    </div>
-
-                    <!-- Room Stats -->
-                    <div style="background: rgba(255,255,255,0.05); border: 1px solid rgba(0,212,255,0.2); border-radius: 8px; padding: 15px;">
-                        <p style="margin-bottom: 10px;"><strong>Room Conditions</strong></p>
-                        <p style="margin: 5px 0; font-size: 0.9em;">
-                            <span style="color: #00d4ff;">Temperature:</span> 
-                            <span id="room_temp_display">-- °C</span>
-                        </p>
-                        <p style="margin: 5px 0; font-size: 0.9em;">
-                            <span style="color: #00d4ff;">Humidity:</span> 
-                            <span id="room_humidity_display">-- %</span>
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Lighting Control Card -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <span class="card-icon">💡</span>
-                        Lighting Control
-                    </div>
-                </div>
-
-                <div style="margin-bottom: 20px;">
-                    <p style="margin-bottom: 15px; color: #95a5a6;">
-                        <strong style="color: #00d4ff;">UV Lights</strong> (8 units)
-                    </p>
-                    <div class="lights-grid">
-                        <div class="light-control off" id="light-uv-1" onclick="toggleLight('uv', 1)">
-                            <div class="light-icon">☀️</div>
-                            <div class="light-label">UV-1</div>
-                        </div>
-                        <div class="light-control off" id="light-uv-2" onclick="toggleLight('uv', 2)">
-                            <div class="light-icon">☀️</div>
-                            <div class="light-label">UV-2</div>
-                        </div>
-                        <div class="light-control off" id="light-uv-3" onclick="toggleLight('uv', 3)">
-                            <div class="light-icon">☀️</div>
-                            <div class="light-label">UV-3</div>
-                        </div>
-                        <div class="light-control off" id="light-uv-4" onclick="toggleLight('uv', 4)">
-                            <div class="light-icon">☀️</div>
-                            <div class="light-label">UV-4</div>
-                        </div>
-                        <div class="light-control off" id="light-uv-5" onclick="toggleLight('uv', 5)">
-                            <div class="light-icon">☀️</div>
-                            <div class="light-label">UV-5</div>
-                        </div>
-                        <div class="light-control off" id="light-uv-6" onclick="toggleLight('uv', 6)">
-                            <div class="light-icon">☀️</div>
-                            <div class="light-label">UV-6</div>
-                        </div>
-                        <div class="light-control off" id="light-uv-7" onclick="toggleLight('uv', 7)">
-                            <div class="light-icon">☀️</div>
-                            <div class="light-label">UV-7</div>
-                        </div>
-                        <div class="light-control off" id="light-uv-8" onclick="toggleLight('uv', 8)">
-                            <div class="light-icon">☀️</div>
-                            <div class="light-label">UV-8</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <p style="margin-bottom: 15px; color: #95a5a6;">
-                        <strong style="color: #e74c3c;">Red Lights</strong> (4 units)
-                    </p>
-                    <div class="lights-grid" style="grid-template-columns: repeat(4, 1fr);">
-                        <div class="light-control off" id="light-red-1" onclick="toggleLight('red', 1)">
-                            <div class="light-icon">🔴</div>
-                            <div class="light-label">Red-1</div>
-                        </div>
-                        <div class="light-control off" id="light-red-2" onclick="toggleLight('red', 2)">
-                            <div class="light-icon">🔴</div>
-                            <div class="light-label">Red-2</div>
-                        </div>
-                        <div class="light-control off" id="light-red-3" onclick="toggleLight('red', 3)">
-                            <div class="light-icon">🔴</div>
-                            <div class="light-label">Red-3</div>
-                        </div>
-                        <div class="light-control off" id="light-red-4" onclick="toggleLight('red', 4)">
-                            <div class="light-icon">🔴</div>
-                            <div class="light-label">Red-4</div>
-                        </div>
-                    </div>
-                </div>
+                <div class="status-item">Last: <span id="lastUpdate">Just now</span></div>
             </div>
         </div>
 
-        <!-- Sensors Page -->
-        <div id="sensors" class="page" style="display: none;">
-            <div class="header">
-                <h1>🌱 Soil Sensor Monitoring</h1>
+        <!-- CONTENT -->
+        <div class="content-area">
+            <!-- ROOM CONTROLS -->
+            <div class="room-controls">
+                <div class="control-card">
+                    <div class="control-label">Room Temperature</div>
+                    <div class="control-value" id="roomTemp">22.5</div>
+                    <div class="control-unit">°C</div>
+                </div>
+                <div class="control-card">
+                    <div class="control-label">Room Humidity</div>
+                    <div class="control-value" id="roomHumidity">65</div>
+                    <div class="control-unit">%</div>
+                </div>
+                <div class="control-card">
+                    <div class="control-label">AC Status</div>
+                    <div class="control-value" id="acStatus">OFF</div>
+                    <div class="control-unit"></div>
+                </div>
+                <div class="control-card">
+                    <div class="control-label">Active Lights</div>
+                    <div class="control-value" id="activeLights">0</div>
+                    <div class="control-unit">/ 12</div>
+                </div>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 20px; margin-bottom: 30px;">
-                <!-- Sensor 1 Detailed -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <span class="card-icon">📊</span>
-                            Sensor 1 - Container 1
+            <!-- CONTAINERS SECTION -->
+            <div class="containers-section">
+                <div class="section-title">📦 Containers</div>
+                <div class="containers-grid">
+                    <!-- Container 1 -->
+                    <div class="container-card">
+                        <div class="container-header">
+                            <div class="container-name">Container 1</div>
+                            <div class="status-indicator"></div>
                         </div>
-                        <div style="background: #2ecc71; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Connected</div>
-                    </div>
-                    <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(0,212,255,0.1);">
-                        <p style="font-size: 0.9em; color: #95a5a6; margin-bottom: 8px;">Slave ID: <strong style="color: #00d4ff;">1</strong></p>
-                        <p style="font-size: 0.9em; color: #95a5a6;">Last Update: <strong style="color: #2ecc71;">Just Now</strong></p>
-                    </div>
-                    <div class="sensor-reading">
-                        <div class="reading-item" style="border-left-color: #3498db;">
-                            <div class="reading-label">Nitrogen (N)</div>
-                            <div class="reading-value" style="color: #3498db;">75.2</div>
-                            <div class="reading-unit">mg/kg</div>
-                            <div class="reading-status" style="background: rgba(52,152,219,0.2); color: #3498db; border-color: #3498db;">Optimal</div>
-                        </div>
-                        <div class="reading-item" style="border-left-color: #9b59b6;">
-                            <div class="reading-label">Phosphorus (P)</div>
-                            <div class="reading-value" style="color: #9b59b6;">245.3</div>
-                            <div class="reading-unit">mg/kg</div>
-                            <div class="reading-status" style="background: rgba(155,89,182,0.2); color: #9b59b6;">Optimal</div>
-                        </div>
-                        <div class="reading-item" style="border-left-color: #1abc9c;">
-                            <div class="reading-label">Potassium (K)</div>
-                            <div class="reading-value" style="color: #1abc9c;">163.5</div>
-                            <div class="reading-unit">mg/kg</div>
-                            <div class="reading-status" style="background: rgba(26,188,156,0.2); color: #1abc9c;">Optimal</div>
-                        </div>
-                        <div class="reading-item" style="border-left-color: #f39c12;">
-                            <div class="reading-label">pH Level</div>
-                            <div class="reading-value" style="color: #f39c12;">6.98</div>
-                            <div class="reading-status" style="background: rgba(243,156,18,0.2); color: #f39c12;">Optimal</div>
-                        </div>
-                        <div class="reading-item" style="border-left-color: #e74c3c;">
-                            <div class="reading-label">EC (Salinity)</div>
-                            <div class="reading-value" style="color: #e74c3c;">5.58</div>
-                            <div class="reading-unit">mS/cm</div>
-                            <div class="reading-status" style="background: rgba(231,76,60,0.2); color: #e74c3c;">Monitor</div>
-                        </div>
-                        <div class="reading-item" style="border-left-color: #16a085;">
-                            <div class="reading-label">Soil Temperature</div>
-                            <div class="reading-value" style="color: #16a085;">21.3</div>
-                            <div class="reading-unit">°C</div>
-                            <div class="reading-status" style="background: rgba(22,160,133,0.2); color: #16a085;">Good</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sensor 2 Detailed -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <span class="card-icon">📊</span>
-                            Sensor 2 - Container 2
-                        </div>
-                        <div style="background: #e74c3c; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Not Connected</div>
-                    </div>
-                    <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(0,212,255,0.1);">
-                        <p style="font-size: 0.9em; color: #95a5a6; margin-bottom: 8px;">Slave ID: <strong style="color: #00d4ff;">2</strong></p>
-                        <p style="font-size: 0.9em; color: #95a5a6;">Status: <strong style="color: #e74c3c;">No Response</strong></p>
-                    </div>
-                    <div style="display: flex; align-items: center; justify-content: center; min-height: 300px; background: rgba(231,76,60,0.1); border-radius: 8px;">
-                        <div style="text-align: center;">
-                            <div style="font-size: 3em; margin-bottom: 10px;">❌</div>
-                            <p style="color: #95a5a6;">Sensor not responding</p>
-                            <p style="font-size: 0.85em; color: #7f8c8d;">Check connection or hardware</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sensor 3 Detailed -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <span class="card-icon">📊</span>
-                            Sensor 3 - Container 3
-                        </div>
-                        <div style="background: #e74c3c; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Not Connected</div>
-                    </div>
-                    <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(0,212,255,0.1);">
-                        <p style="font-size: 0.9em; color: #95a5a6; margin-bottom: 8px;">Slave ID: <strong style="color: #00d4ff;">3</strong></p>
-                        <p style="font-size: 0.9em; color: #95a5a6;">Status: <strong style="color: #e74c3c;">No Response</strong></p>
-                    </div>
-                    <div style="display: flex; align-items: center; justify-content: center; min-height: 300px; background: rgba(231,76,60,0.1); border-radius: 8px;">
-                        <div style="text-align: center;">
-                            <div style="font-size: 3em; margin-bottom: 10px;">❌</div>
-                            <p style="color: #95a5a6;">Sensor not responding</p>
-                            <p style="font-size: 0.85em; color: #7f8c8d;">Check connection or hardware</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Sensor 4 Detailed -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <span class="card-icon">📊</span>
-                            Sensor 4 - Container 4
-                        </div>
-                        <div style="background: #e74c3c; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Not Connected</div>
-                    </div>
-                    <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(0,212,255,0.1);">
-                        <p style="font-size: 0.9em; color: #95a5a6; margin-bottom: 8px;">Slave ID: <strong style="color: #00d4ff;">4</strong></p>
-                        <p style="font-size: 0.9em; color: #95a5a6;">Status: <strong style="color: #e74c3c;">No Response</strong></p>
-                    </div>
-                    <div style="display: flex; align-items: center; justify-content: center; min-height: 300px; background: rgba(231,76,60,0.1); border-radius: 8px;">
-                        <div style="text-align: center;">
-                            <div style="font-size: 3em; margin-bottom: 10px;">❌</div>
-                            <p style="color: #95a5a6;">Sensor not responding</p>
-                            <p style="font-size: 0.85em; color: #7f8c8d;">Check connection or hardware</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sensor Statistics -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <span class="card-icon">📈</span>
-                        Sensor Health Report
-                    </div>
-                </div>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
-                    <div style="background: rgba(52,152,219,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid #3498db;">
-                        <p style="color: #95a5a6; margin-bottom: 5px;">Connected Sensors</p>
-                        <p style="font-size: 2em; color: #3498db; font-weight: bold;">--</p>
-                    </div>
-                    <div style="background: rgba(46,204,113,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid #2ecc71;">
-                        <p style="color: #95a5a6; margin-bottom: 5px;">Last Successful Read</p>
-                        <p style="font-size: 1.3em; color: #2ecc71;">--</p>
-                    </div>
-                    <div style="background: rgba(241,196,15,0.1); padding: 15px; border-radius: 8px; border-left: 4px solid #f39c12;">
-                        <p style="color: #95a5a6; margin-bottom: 5px;">Firmware Version</p>
-                        <p style="font-size: 1.3em; color: #f39c12;">--</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Environment Page -->
-        <div id="environment" class="page" style="display: none;">
-            <div class="header">
-                <h1>🌡️ Environmental Monitoring</h1>
-            </div>
-
-            <!-- Real-time Environment Stats -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 30px;">
-                <div class="card" style="text-align: center;">
-                    <div style="font-size: 3em; margin-bottom: 10px;">🌡️</div>
-                    <p style="color: #95a5a6; margin-bottom: 10px;">Room Temperature</p>
-                    <p style="font-size: 2.5em; color: #e74c3c; font-weight: bold;">--</p>
-                    <p style="font-size: 0.85em; color: #7f8c8d;">Target: 20-24°C</p>
-                </div>
-
-                <div class="card" style="text-align: center;">
-                    <div style="font-size: 3em; margin-bottom: 10px;">💧</div>
-                    <p style="color: #95a5a6; margin-bottom: 10px;">Room Humidity</p>
-                    <p style="font-size: 2.5em; color: #3498db; font-weight: bold;">--</p>
-                    <p style="font-size: 0.85em; color: #7f8c8d;">Target: 60-70%</p>
-                </div>
-
-                <div class="card" style="text-align: center;">
-                    <div style="font-size: 3em; margin-bottom: 10px;">💨</div>
-                    <p style="color: #95a5a6; margin-bottom: 10px;">Air Quality (CO2)</p>
-                    <p style="font-size: 2.5em; color: #2ecc71; font-weight: bold;">--</p>
-                    <p style="font-size: 0.85em; color: #7f8c8d;">Optimal level</p>
-                </div>
-
-                <div class="card" style="text-align: center;">
-                    <div style="font-size: 3em; margin-bottom: 10px;">⚡</div>
-                    <p style="color: #95a5a6; margin-bottom: 10px;">Light Intensity</p>
-                    <p style="font-size: 2.5em; color: #f39c12; font-weight: bold;">--</p>
-                    <p style="font-size: 0.85em; color: #7f8c8d;">PPF reading</p>
-                </div>
-            </div>
-
-            <!-- Detailed Environment Monitoring -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <span class="card-icon">📊</span>
-                        Detailed Metrics
-                    </div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <div>
-                        <p style="color: #00d4ff; font-weight: bold; margin-bottom: 15px;">Temperature Profile</p>
-                        <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin-bottom: 10px;">
-                            <p style="display: flex; justify-content: space-between; margin: 8px 0; font-size: 0.9em;">
-                                <span>Current</span>
-                                <strong style="color: #e74c3c;">--</strong>
-                            </p>
-                            <p style="display: flex; justify-content: space-between; margin: 8px 0; font-size: 0.9em;">
-                                <span>Min (24h)</span>
-                                <strong style="color: #3498db;">--</strong>
-                            </p>
-                            <p style="display: flex; justify-content: space-between; margin: 8px 0; font-size: 0.9em;">
-                                <span>Max (24h)</span>
-                                <strong style="color: #e74c3c;">--</strong>
-                            </p>
-                            <p style="display: flex; justify-content: space-between; margin: 8px 0; font-size: 0.9em;">
-                                <span>Average</span>
-                                <strong style="color: #2ecc71;">--</strong>
-                            </p>
-                        </div>
-                    </div>
-                    <div>
-                        <p style="color: #00d4ff; font-weight: bold; margin-bottom: 15px;">Humidity Profile</p>
-                        <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px; margin-bottom: 10px;">
-                            <p style="display: flex; justify-content: space-between; margin: 8px 0; font-size: 0.9em;">
-                                <span>Current</span>
-                                <strong style="color: #3498db;">--</strong>
-                            </p>
-                            <p style="display: flex; justify-content: space-between; margin: 8px 0; font-size: 0.9em;">
-                                <span>Min (24h)</span>
-                                <strong style="color: #e74c3c;">--</strong>
-                            </p>
-                            <p style="display: flex; justify-content: space-between; margin: 8px 0; font-size: 0.9em;">
-                                <span>Max (24h)</span>
-                                <strong style="color: #3498db;">--</strong>
-                            </p>
-                            <p style="display: flex; justify-content: space-between; margin: 8px 0; font-size: 0.9em;">
-                                <span>Average</span>
-                                <strong style="color: #2ecc71;">--</strong>
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Advanced Metrics -->
-            <div class="card" style="margin-top: 20px;">
-                <div class="card-header">
-                    <div class="card-title">
-                        <span class="card-icon">🔬</span>
-                        Advanced Parameters
-                    </div>
-                </div>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
-                    <div style="background: rgba(52,152,219,0.1); padding: 15px; border-radius: 8px;">
-                        <p style="color: #95a5a6; font-size: 0.9em; margin-bottom: 8px;">Dew Point</p>
-                        <p style="font-size: 1.8em; font-weight: bold; color: #3498db;">--</p>
-                        <p style="font-size: 0.8em; color: #7f8c8d;">Condensation risk: --</p>
-                    </div>
-                    <div style="background: rgba(46,204,113,0.1); padding: 15px; border-radius: 8px;">
-                        <p style="color: #95a5a6; font-size: 0.9em; margin-bottom: 8px;">VPD (Vapor Pressure Deficit)</p>
-                        <p style="font-size: 1.8em; font-weight: bold; color: #2ecc71;">--</p>
-                        <p style="font-size: 0.8em; color: #7f8c8d;">Optimal for growth</p>
-                    </div>
-                    <div style="background: rgba(241,196,15,0.1); padding: 15px; border-radius: 8px;">
-                        <p style="color: #95a5a6; font-size: 0.9em; margin-bottom: 8px;">Light-Dark Cycle</p>
-                        <p style="font-size: 1.8em; font-weight: bold; color: #f39c12;">--</p>
-                        <p style="font-size: 0.8em; color: #7f8c8d;">Lights ON - --</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Lights Page -->
-        <div id="lights" class="page" style="display: none;">
-            <div class="header">
-                <h1>💡 Lighting System Control</h1>
-            </div>
-
-            <!-- Light Overview -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 30px;">
-                <div class="card">
-                    <div style="text-align: center;">
-                        <p style="color: #95a5a6; font-size: 0.9em; margin-bottom: 8px;">UV Lights Status</p>
-                        <p style="font-size: 3em; margin-bottom: 10px;">☀️</p>
-                        <p style="font-size: 1.8em; font-weight: bold; color: #f39c12;">5/8 ON</p>
-                        <p style="font-size: 0.8em; color: #95a5a6;">Total Power: 400W</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div style="text-align: center;">
-                        <p style="color: #95a5a6; font-size: 0.9em; margin-bottom: 8px;">Red Lights Status</p>
-                        <p style="font-size: 3em; margin-bottom: 10px;">🔴</p>
-                        <p style="font-size: 1.8em; font-weight: bold; color: #e74c3c;">3/4 ON</p>
-                        <p style="font-size: 0.8em; color: #95a5a6;">Total Power: 120W</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div style="text-align: center;">
-                        <p style="color: #95a5a6; font-size: 0.9em; margin-bottom: 8px;">Total Light Power</p>
-                        <p style="font-size: 3em; margin-bottom: 10px;">⚡</p>
-                        <p style="font-size: 1.8em; font-weight: bold; color: #3498db;">520W</p>
-                        <p style="font-size: 0.8em; color: #95a5a6;">PSU: 80% capacity</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- UV Lights -->
-            <div class="card" style="margin-bottom: 20px;">
-                <div class="card-header">
-                    <div class="card-title">
-                        <span class="card-icon">☀️</span>
-                        UV Lights (8 units - 50W each)
-                    </div>
-                </div>
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;">
-                    <div class="light-control on">
-                        <div class="light-icon">☀️</div>
-                        <div class="light-label">UV-1</div>
-                        <p style="font-size: 0.75em; color: #f39c12; margin-top: 5px;">ON</p>
-                    </div>
-                    <div class="light-control on">
-                        <div class="light-icon">☀️</div>
-                        <div class="light-label">UV-2</div>
-                        <p style="font-size: 0.75em; color: #f39c12; margin-top: 5px;">ON</p>
-                    </div>
-                    <div class="light-control">
-                        <div class="light-icon">☀️</div>
-                        <div class="light-label">UV-3</div>
-                        <p style="font-size: 0.75em; color: #95a5a6; margin-top: 5px;">OFF</p>
-                    </div>
-                    <div class="light-control on">
-                        <div class="light-icon">☀️</div>
-                        <div class="light-label">UV-4</div>
-                        <p style="font-size: 0.75em; color: #f39c12; margin-top: 5px;">ON</p>
-                    </div>
-                    <div class="light-control on">
-                        <div class="light-icon">☀️</div>
-                        <div class="light-label">UV-5</div>
-                        <p style="font-size: 0.75em; color: #f39c12; margin-top: 5px;">ON</p>
-                    </div>
-                    <div class="light-control">
-                        <div class="light-icon">☀️</div>
-                        <div class="light-label">UV-6</div>
-                        <p style="font-size: 0.75em; color: #95a5a6; margin-top: 5px;">OFF</p>
-                    </div>
-                    <div class="light-control on">
-                        <div class="light-icon">☀️</div>
-                        <div class="light-label">UV-7</div>
-                        <p style="font-size: 0.75em; color: #f39c12; margin-top: 5px;">ON</p>
-                    </div>
-                    <div class="light-control">
-                        <div class="light-icon">☀️</div>
-                        <div class="light-label">UV-8</div>
-                        <p style="font-size: 0.75em; color: #95a5a6; margin-top: 5px;">OFF</p>
-                    </div>
-                </div>
-                <div style="display: flex; gap: 10px;">
-                    <button class="control-btn" style="flex: 1;">All ON</button>
-                    <button class="control-btn danger" style="flex: 1;">All OFF</button>
-                </div>
-            </div>
-
-            <!-- Red Lights -->
-            <div class="card" style="margin-bottom: 20px;">
-                <div class="card-header">
-                    <div class="card-title">
-                        <span class="card-icon">🔴</span>
-                        Red Lights (4 units - 30W each)
-                    </div>
-                </div>
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px;">
-                    <div class="light-control on">
-                        <div class="light-icon">🔴</div>
-                        <div class="light-label">Red-1</div>
-                        <p style="font-size: 0.75em; color: #e74c3c; margin-top: 5px;">ON</p>
-                    </div>
-                    <div class="light-control on">
-                        <div class="light-icon">🔴</div>
-                        <div class="light-label">Red-2</div>
-                        <p style="font-size: 0.75em; color: #e74c3c; margin-top: 5px;">ON</p>
-                    </div>
-                    <div class="light-control">
-                        <div class="light-icon">🔴</div>
-                        <div class="light-label">Red-3</div>
-                        <p style="font-size: 0.75em; color: #95a5a6; margin-top: 5px;">OFF</p>
-                    </div>
-                    <div class="light-control on">
-                        <div class="light-icon">🔴</div>
-                        <div class="light-label">Red-4</div>
-                        <p style="font-size: 0.75em; color: #e74c3c; margin-top: 5px;">ON</p>
-                    </div>
-                </div>
-                <div style="display: flex; gap: 10px;">
-                    <button class="control-btn" style="flex: 1;">All ON</button>
-                    <button class="control-btn danger" style="flex: 1;">All OFF</button>
-                </div>
-            </div>
-
-            <!-- Light Schedule -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <span class="card-icon">⏰</span>
-                        Light Schedule
-                    </div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div style="background: rgba(52,152,219,0.1); padding: 15px; border-radius: 8px;">
-                        <p style="color: #95a5a6; margin-bottom: 8px;">Sunrise Time</p>
-                        <p style="font-size: 1.8em; color: #3498db; font-weight: bold;">06:00 AM</p>
-                    </div>
-                    <div style="background: rgba(231,76,60,0.1); padding: 15px; border-radius: 8px;">
-                        <p style="color: #95a5a6; margin-bottom: 8px;">Sunset Time</p>
-                        <p style="font-size: 1.8em; color: #e74c3c; font-weight: bold;">08:00 PM</p>
-                    </div>
-                    <div style="background: rgba(46,204,113,0.1); padding: 15px; border-radius: 8px;">
-                        <p style="color: #95a5a6; margin-bottom: 8px;">Daily Duration</p>
-                        <p style="font-size: 1.8em; color: #2ecc71; font-weight: bold;">14 hours</p>
-                    </div>
-                    <div style="background: rgba(241,196,15,0.1); padding: 15px; border-radius: 8px;">
-                        <p style="color: #95a5a6; margin-bottom: 8px;">Next Cycle</p>
-                        <p style="font-size: 1.8em; color: #f39c12; font-weight: bold;">9.5 hours</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Climate Page -->
-        <div id="climate" class="page" style="display: none;">
-            <div class="header">
-                <h1>❄️ Climate Control System</h1>
-            </div>
-
-            <!-- AC Status Overview -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-bottom: 30px;">
-                <div class="card">
-                    <div style="text-align: center;">
-                        <p style="color: #95a5a6; font-size: 0.9em; margin-bottom: 8px;">AC Status</p>
-                        <p style="font-size: 3em; margin-bottom: 10px;">❄️</p>
-                        <p style="font-size: 1.8em; font-weight: bold; color: #3498db;">OFF</p>
-                        <p style="font-size: 0.8em; color: #95a5a6;">Idle</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div style="text-align: center;">
-                        <p style="color: #95a5a6; font-size: 0.9em; margin-bottom: 8px;">Current Temperature</p>
-                        <p style="font-size: 3em; margin-bottom: 10px;">🌡️</p>
-                        <p style="font-size: 1.8em; font-weight: bold; color: #e74c3c;">22.5°C</p>
-                        <p style="font-size: 0.8em; color: #95a5a6;">Comfortable</p>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div style="text-align: center;">
-                        <p style="color: #95a5a6; font-size: 0.9em; margin-bottom: 8px;">Humidity Level</p>
-                        <p style="font-size: 3em; margin-bottom: 10px;">💧</p>
-                        <p style="font-size: 1.8em; font-weight: bold; color: #3498db;">65%</p>
-                        <p style="font-size: 0.8em; color: #95a5a6;">Normal</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- AC Control Panel -->
-            <div class="card" style="margin-bottom: 20px;">
-                <div class="card-header">
-                    <div class="card-title">
-                        <span class="card-icon">❄️</span>
-                        Air Conditioner Control
-                    </div>
-                </div>
-                <div style="background: rgba(52,152,219,0.1); padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-                    <p style="color: #95a5a6; margin-bottom: 15px;">AC is currently <strong style="color: #3498db;">IDLE</strong></p>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="control-btn" style="flex: 1;">Power ON</button>
-                        <button class="control-btn danger" style="flex: 1;">Power OFF</button>
-                        <button class="control-btn" style="flex: 1;">Auto Mode</button>
-                    </div>
-                </div>
-
-                <p style="color: #00d4ff; font-weight: bold; margin-bottom: 15px;">Temperature Thresholds</p>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
-                        <p style="display: flex; justify-content: space-between; margin: 8px 0;">
-                            <span style="color: #95a5a6;">Turn ON when</span>
-                            <strong style="color: #e74c3c;">28°C</strong>
-                        </p>
-                        <input type="range" min="20" max="35" value="28" style="width: 100%; margin-top: 10px;" />
-                    </div>
-                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
-                        <p style="display: flex; justify-content: space-between; margin: 8px 0;">
-                            <span style="color: #95a5a6;">Turn OFF when</span>
-                            <strong style="color: #3498db;">24°C</strong>
-                        </p>
-                        <input type="range" min="15" max="30" value="24" style="width: 100%; margin-top: 10px;" />
-                    </div>
-                </div>
-            </div>
-
-            <!-- Humidity Control -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <span class="card-icon">💧</span>
-                        Humidity Thresholds
-                    </div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
-                        <p style="display: flex; justify-content: space-between; margin: 8px 0;">
-                            <span style="color: #95a5a6;">Maximum Humidity</span>
-                            <strong style="color: #3498db;">70%</strong>
-                        </p>
-                        <input type="range" min="50" max="100" value="70" style="width: 100%; margin-top: 10px;" />
-                        <p style="font-size: 0.8em; color: #7f8c8d; margin-top: 8px;">AC activates above this level</p>
-                    </div>
-                    <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 8px;">
-                        <p style="display: flex; justify-content: space-between; margin: 8px 0;">
-                            <span style="color: #95a5a6;">Minimum Humidity</span>
-                            <strong style="color: #3498db;">60%</strong>
-                        </p>
-                        <input type="range" min="30" max="80" value="60" style="width: 100%; margin-top: 10px;" />
-                        <p style="font-size: 0.8em; color: #7f8c8d; margin-top: 8px;">AC turns off below this level</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Humidifiers Page -->
-        <div id="humidifiers" class="page" style="display: none;">
-            <div class="header">
-                <h1>💧 Humidifier Control</h1>
-            </div>
-
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-                <!-- Humidifier 1 -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <span class="card-icon">💧</span>
-                            Humidifier 1 (Container 1)
-                        </div>
-                        <div style="background: #2ecc71; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">ON</div>
-                    </div>
-                    <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(0,212,255,0.1);">
-                        <div class="env-overview" style="margin: 0;">
-                            <div class="env-card" style="text-align: center;">
-                                <p style="font-size: 0.8em; color: #95a5a6;">Current RH</p>
-                                <p style="font-size: 1.5em; color: #3498db; font-weight: bold;">72%</p>
+                        <div class="sensor-grid">
+                            <div class="sensor-box">
+                                <div class="sensor-label">Nitrogen</div>
+                                <div class="sensor-value" id="c1_nitrogen">--</div>
+                                <div class="sensor-unit">mg/kg</div>
                             </div>
-                            <div class="env-card" style="text-align: center;">
-                                <p style="font-size: 0.8em; color: #95a5a6;">Target RH</p>
-                                <p style="font-size: 1.5em; color: #2ecc71; font-weight: bold;">75%</p>
+                            <div class="sensor-box">
+                                <div class="sensor-label">Phosphorus</div>
+                                <div class="sensor-value" id="c1_phosphorus">--</div>
+                                <div class="sensor-unit">mg/kg</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">Potassium</div>
+                                <div class="sensor-value" id="c1_potassium">--</div>
+                                <div class="sensor-unit">mg/kg</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">pH</div>
+                                <div class="sensor-value" id="c1_pH">--</div>
+                                <div class="sensor-unit"></div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">EC</div>
+                                <div class="sensor-value" id="c1_EC">--</div>
+                                <div class="sensor-unit">mS/cm</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">Temperature</div>
+                                <div class="sensor-value" id="c1_temperature">--</div>
+                                <div class="sensor-unit">°C</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="control-panel">
-                        <button class="control-btn active">ON</button>
-                        <button class="control-btn">OFF</button>
-                    </div>
-                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(0,212,255,0.1);">
-                        <p style="color: #95a5a6; font-size: 0.9em; margin-bottom: 10px;">Humidity Target</p>
-                        <input type="range" min="50" max="90" value="75" style="width: 100%;" />
-                    </div>
-                </div>
-
-                <!-- Humidifier 2 -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <span class="card-icon">💧</span>
-                            Humidifier 2 (Container 2)
-                        </div>
-                        <div style="background: #95a5a6; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">OFF</div>
-                    </div>
-                    <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(0,212,255,0.1);">
-                        <div class="env-overview" style="margin: 0;">
-                            <div class="env-card" style="text-align: center;">
-                                <p style="font-size: 0.8em; color: #95a5a6;">Current RH</p>
-                                <p style="font-size: 1.5em; color: #3498db; font-weight: bold;">55%</p>
-                            </div>
-                            <div class="env-card" style="text-align: center;">
-                                <p style="font-size: 0.8em; color: #95a5a6;">Target RH</p>
-                                <p style="font-size: 1.5em; color: #2ecc71; font-weight: bold;">70%</p>
-                            </div>
+                        <div class="container-controls">
+                            <button class="control-btn">💧 Humidifier</button>
+                            <button class="control-btn">🔌 OFF</button>
                         </div>
                     </div>
-                    <div class="control-panel">
-                        <button class="control-btn">ON</button>
-                        <button class="control-btn active danger">OFF</button>
-                    </div>
-                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(0,212,255,0.1);">
-                        <p style="color: #95a5a6; font-size: 0.9em; margin-bottom: 10px;">Humidity Target</p>
-                        <input type="range" min="50" max="90" value="70" style="width: 100%;" />
-                    </div>
-                </div>
 
-                <!-- Humidifier 3 -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <span class="card-icon">💧</span>
-                            Humidifier 3 (Container 3)
+                    <!-- Container 2 -->
+                    <div class="container-card">
+                        <div class="container-header">
+                            <div class="container-name">Container 2</div>
+                            <div class="status-indicator"></div>
                         </div>
-                        <div style="background: #2ecc71; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">ON</div>
-                    </div>
-                    <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(0,212,255,0.1);">
-                        <div class="env-overview" style="margin: 0;">
-                            <div class="env-card" style="text-align: center;">
-                                <p style="font-size: 0.8em; color: #95a5a6;">Current RH</p>
-                                <p style="font-size: 1.5em; color: #3498db; font-weight: bold;">68%</p>
+                        <div class="sensor-grid">
+                            <div class="sensor-box">
+                                <div class="sensor-label">Nitrogen</div>
+                                <div class="sensor-value" id="c2_nitrogen">--</div>
+                                <div class="sensor-unit">mg/kg</div>
                             </div>
-                            <div class="env-card" style="text-align: center;">
-                                <p style="font-size: 0.8em; color: #95a5a6;">Target RH</p>
-                                <p style="font-size: 1.5em; color: #2ecc71; font-weight: bold;">70%</p>
+                            <div class="sensor-box">
+                                <div class="sensor-label">Phosphorus</div>
+                                <div class="sensor-value" id="c2_phosphorus">--</div>
+                                <div class="sensor-unit">mg/kg</div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="control-panel">
-                        <button class="control-btn active">ON</button>
-                        <button class="control-btn">OFF</button>
-                    </div>
-                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(0,212,255,0.1);">
-                        <p style="color: #95a5a6; font-size: 0.9em; margin-bottom: 10px;">Humidity Target</p>
-                        <input type="range" min="50" max="90" value="70" style="width: 100%;" />
-                    </div>
-                </div>
-
-                <!-- Humidifier 4 -->
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">
-                            <span class="card-icon">💧</span>
-                            Humidifier 4 (Container 4)
-                        </div>
-                        <div style="background: #95a5a6; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">OFF</div>
-                    </div>
-                    <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid rgba(0,212,255,0.1);">
-                        <div class="env-overview" style="margin: 0;">
-                            <div class="env-card" style="text-align: center;">
-                                <p style="font-size: 0.8em; color: #95a5a6;">Current RH</p>
-                                <p style="font-size: 1.5em; color: #3498db; font-weight: bold;">62%</p>
+                            <div class="sensor-box">
+                                <div class="sensor-label">Potassium</div>
+                                <div class="sensor-value" id="c2_potassium">--</div>
+                                <div class="sensor-unit">mg/kg</div>
                             </div>
-                            <div class="env-card" style="text-align: center;">
-                                <p style="font-size: 0.8em; color: #95a5a6;">Target RH</p>
-                                <p style="font-size: 1.5em; color: #2ecc71; font-weight: bold;">68%</p>
+                            <div class="sensor-box">
+                                <div class="sensor-label">pH</div>
+                                <div class="sensor-value" id="c2_pH">--</div>
+                                <div class="sensor-unit"></div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">EC</div>
+                                <div class="sensor-value" id="c2_EC">--</div>
+                                <div class="sensor-unit">mS/cm</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">Temperature</div>
+                                <div class="sensor-value" id="c2_temperature">--</div>
+                                <div class="sensor-unit">°C</div>
                             </div>
                         </div>
+                        <div class="container-controls">
+                            <button class="control-btn">💧 Humidifier</button>
+                            <button class="control-btn">🔌 OFF</button>
+                        </div>
                     </div>
-                    <div class="control-panel">
-                        <button class="control-btn">ON</button>
-                        <button class="control-btn active danger">OFF</button>
+
+                    <!-- Container 3 -->
+                    <div class="container-card">
+                        <div class="container-header">
+                            <div class="container-name">Container 3</div>
+                            <div class="status-indicator"></div>
+                        </div>
+                        <div class="sensor-grid">
+                            <div class="sensor-box">
+                                <div class="sensor-label">Nitrogen</div>
+                                <div class="sensor-value" id="c3_nitrogen">--</div>
+                                <div class="sensor-unit">mg/kg</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">Phosphorus</div>
+                                <div class="sensor-value" id="c3_phosphorus">--</div>
+                                <div class="sensor-unit">mg/kg</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">Potassium</div>
+                                <div class="sensor-value" id="c3_potassium">--</div>
+                                <div class="sensor-unit">mg/kg</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">pH</div>
+                                <div class="sensor-value" id="c3_pH">--</div>
+                                <div class="sensor-unit"></div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">EC</div>
+                                <div class="sensor-value" id="c3_EC">--</div>
+                                <div class="sensor-unit">mS/cm</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">Temperature</div>
+                                <div class="sensor-value" id="c3_temperature">--</div>
+                                <div class="sensor-unit">°C</div>
+                            </div>
+                        </div>
+                        <div class="container-controls">
+                            <button class="control-btn">💧 Humidifier</button>
+                            <button class="control-btn">🔌 OFF</button>
+                        </div>
                     </div>
-                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(0,212,255,0.1);">
-                        <p style="color: #95a5a6; font-size: 0.9em; margin-bottom: 10px;">Humidity Target</p>
-                        <input type="range" min="50" max="90" value="68" style="width: 100%;" />
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Alerts Page -->
-        <div id="alerts" class="page" style="display: none;">
-            <div class="header">
-                <h1>🔔 System Alerts & Notifications</h1>
-            </div>
-
-            <div class="alerts-section">
-                <div style="margin-bottom: 20px;">
-                    <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-                        <button class="control-btn" style="flex: 0.5;">All (12)</button>
-                        <button class="control-btn" style="flex: 0.5;">Critical (0)</button>
-                        <button class="control-btn" style="flex: 0.5;">Warnings (2)</button>
-                        <button class="control-btn" style="flex: 0.5;">Info (10)</button>
-                    </div>
-                </div>
-
-                <div class="alert-item success">
-                    <div class="alert-icon">✅</div>
-                    <div class="alert-content">
-                        <div class="alert-title">System Online & Operational</div>
-                        <div class="alert-time">2 minutes ago - All sensors responding normally</div>
-                    </div>
-                </div>
-
-                <div class="alert-item warning">
-                    <div class="alert-icon">⚠️</div>
-                    <div class="alert-content">
-                        <div class="alert-title">Humidity Low in Container 2</div>
-                        <div class="alert-time">15 minutes ago - Humidity at 55%, below target of 70%</div>
-                    </div>
-                </div>
-
-                <div class="alert-item success">
-                    <div class="alert-icon">ℹ️</div>
-                    <div class="alert-content">
-                        <div class="alert-title">Light Schedule Updated</div>
-                        <div class="alert-time">1 hour ago - Lights set to 14-hour cycle (06:00-20:00)</div>
-                    </div>
-                </div>
-
-                <div class="alert-item warning">
-                    <div class="alert-icon">⚠️</div>
-                    <div class="alert-content">
-                        <div class="alert-title">Sensor 2 Not Responding</div>
-                        <div class="alert-time">2 hours ago - No data from Container 2 NPK sensor</div>
-                    </div>
-                </div>
-
-                <div class="alert-item success">
-                    <div class="alert-icon">✅</div>
-                    <div class="alert-content">
-                        <div class="alert-title">AC Auto-Control Enabled</div>
-                        <div class="alert-time">3 hours ago - Room temperature optimal</div>
-                    </div>
-                </div>
-
-                <div class="alert-item success">
-                    <div class="alert-icon">✅</div>
-                    <div class="alert-content">
-                        <div class="alert-title">Container 1 Nutrient Levels Optimal</div>
-                        <div class="alert-time">5 minutes ago - N:75, P:245, K:158 (all within range)</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- History Page -->
-        <div id="history" class="page" style="display: none;">
-            <div class="header">
-                <h1>📈 Historical Data & Analytics</h1>
-            </div>
-
-            <!-- Time Period Selector -->
-            <div style="display: flex; gap: 10px; margin-bottom: 30px;">
-                <button class="control-btn" style="flex: 1;">24 Hours</button>
-                <button class="control-btn" style="flex: 1;">7 Days</button>
-                <button class="control-btn active" style="flex: 1;">30 Days</button>
-                <button class="control-btn" style="flex: 1;">Custom</button>
-            </div>
-
-            <!-- Chart Placeholders -->
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(450px, 1fr)); gap: 20px; margin-bottom: 30px;">
-                <div class="chart-container">
-                    <div class="chart-title">Room Temperature Trend (30 days)</div>
-                    <div style="background: rgba(255,255,255,0.05); height: 250px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                        <p style="color: #95a5a6;">📉 Temperature Chart</p>
-                    </div>
-                </div>
-
-                <div class="chart-container">
-                    <div class="chart-title">Room Humidity Trend (30 days)</div>
-                    <div style="background: rgba(255,255,255,0.05); height: 250px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                        <p style="color: #95a5a6;">📊 Humidity Chart</p>
-                    </div>
-                </div>
-
-                <div class="chart-container">
-                    <div class="chart-title">Container 1 Nitrogen Levels</div>
-                    <div style="background: rgba(255,255,255,0.05); height: 250px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                        <p style="color: #95a5a6;">📈 Nutrition Chart</p>
-                    </div>
-                </div>
-
-                <div class="chart-container">
-                    <div class="chart-title">Light Hours Utilization</div>
-                    <div style="background: rgba(255,255,255,0.05); height: 250px; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                        <p style="color: #95a5a6;">💡 Light Chart</p>
+                    <!-- Container 4 -->
+                    <div class="container-card">
+                        <div class="container-header">
+                            <div class="container-name">Container 4</div>
+                            <div class="status-indicator"></div>
+                        </div>
+                        <div class="sensor-grid">
+                            <div class="sensor-box">
+                                <div class="sensor-label">Nitrogen</div>
+                                <div class="sensor-value" id="c4_nitrogen">--</div>
+                                <div class="sensor-unit">mg/kg</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">Phosphorus</div>
+                                <div class="sensor-value" id="c4_phosphorus">--</div>
+                                <div class="sensor-unit">mg/kg</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">Potassium</div>
+                                <div class="sensor-value" id="c4_potassium">--</div>
+                                <div class="sensor-unit">mg/kg</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">pH</div>
+                                <div class="sensor-value" id="c4_pH">--</div>
+                                <div class="sensor-unit"></div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">EC</div>
+                                <div class="sensor-value" id="c4_EC">--</div>
+                                <div class="sensor-unit">mS/cm</div>
+                            </div>
+                            <div class="sensor-box">
+                                <div class="sensor-label">Temperature</div>
+                                <div class="sensor-value" id="c4_temperature">--</div>
+                                <div class="sensor-unit">°C</div>
+                            </div>
+                        </div>
+                        <div class="container-controls">
+                            <button class="control-btn">💧 Humidifier</button>
+                            <button class="control-btn">🔌 OFF</button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Statistics Summary -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <span class="card-icon">📊</span>
-                        30-Day Statistics
+            <!-- CLIMATE CONTROL SYSTEM -->
+            <div class="climate-system">
+                <div class="climate-section-title">❄️ Climate Control System</div>
+                <div class="climate-grid">
+                    <div class="climate-box">
+                        <div class="climate-title">Air Conditioner</div>
+                        <div class="status-badge off" id="acBadge">Status: OFF</div>
+                        <div class="climate-stat">
+                            <span class="climate-stat-label">Current Temp:</span>
+                            <span class="climate-stat-value" id="acTemp">22.5°C</span>
+                        </div>
+                        <div class="climate-stat">
+                            <span class="climate-stat-label">Target Temp:</span>
+                            <span class="climate-stat-value" id="acTarget">20°C</span>
+                        </div>
                     </div>
-                </div>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
-                    <div style="background: rgba(231,76,60,0.1); padding: 15px; border-radius: 8px;">
-                        <p style="color: #95a5a6; margin-bottom: 8px;">Avg Temperature</p>
-                        <p style="font-size: 2em; color: #e74c3c; font-weight: bold;">22.3°C</p>
-                        <p style="font-size: 0.8em; color: #7f8c8d;">High: 25.8°C / Low: 18.1°C</p>
-                    </div>
-                    <div style="background: rgba(52,152,219,0.1); padding: 15px; border-radius: 8px;">
-                        <p style="color: #95a5a6; margin-bottom: 8px;">Avg Humidity</p>
-                        <p style="font-size: 2em; color: #3498db; font-weight: bold;">64.5%</p>
-                        <p style="font-size: 0.8em; color: #7f8c8d;">High: 78% / Low: 52%</p>
-                    </div>
-                    <div style="background: rgba(46,204,113,0.1); padding: 15px; border-radius: 8px;">
-                        <p style="color: #95a5a6; margin-bottom: 8px;">Light Hours Used</p>
-                        <p style="font-size: 2em; color: #2ecc71; font-weight: bold;">420 hrs</p>
-                        <p style="font-size: 0.8em; color: #7f8c8d;">14hr/day average</p>
-                    </div>
-                    <div style="background: rgba(241,196,15,0.1); padding: 15px; border-radius: 8px;">
-                        <p style="color: #95a5a6; margin-bottom: 8px;">AC Runtime</p>
-                        <p style="font-size: 2em; color: #f39c12; font-weight: bold;">48 hrs</p>
-                        <p style="font-size: 0.8em; color: #7f8c8d;">1.6 hours/day avg</p>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <!-- Settings Page -->
-        <div id="settings" class="page" style="display: none;">
-            <div class="header">
-                <h1>⚙️ System Settings & Configuration</h1>
-            </div>
-
-            <!-- General Settings -->
-            <div class="card" style="margin-bottom: 20px;">
-                <div class="card-header">
-                    <div class="card-title">
-                        <span class="card-icon">🔧</span>
-                        General Settings
+                    <div class="climate-box">
+                        <div class="climate-title">Room Conditions</div>
+                        <div class="climate-stat">
+                            <span class="climate-stat-label">Temperature:</span>
+                            <span class="climate-stat-value" id="roomCondTemp">22.5°C</span>
+                        </div>
+                        <div class="climate-stat">
+                            <span class="climate-stat-label">Humidity:</span>
+                            <span class="climate-stat-value" id="roomCondHumidity">65%</span>
+                        </div>
+                        <div class="climate-stat">
+                            <span class="climate-stat-label">CO2 Level:</span>
+                            <span class="climate-stat-value" id="co2Level">420</span>
+                        </div>
                     </div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <div>
-                        <p style="color: #95a5a6; margin-bottom: 10px;">System Name</p>
-                        <input type="text" value="GrowRoom Advanced" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(0,212,255,0.2); color: #ecf0f1; border-radius: 5px;" />
-                    </div>
-                    <div>
-                        <p style="color: #95a5a6; margin-bottom: 10px;">Location</p>
-                        <input type="text" value="Mushroom Farm - Building A" style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(0,212,255,0.2); color: #ecf0f1; border-radius: 5px;" />
-                    </div>
-                    <div>
-                        <p style="color: #95a5a6; margin-bottom: 10px;">Time Zone</p>
-                        <select style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(0,212,255,0.2); color: #ecf0f1; border-radius: 5px;">
-                            <option>UTC+0:00</option>
-                            <option selected>UTC+5:30</option>
-                            <option>UTC+8:00</option>
-                        </select>
-                    </div>
-                    <div>
-                        <p style="color: #95a5a6; margin-bottom: 10px;">Language</p>
-                        <select style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(0,212,255,0.2); color: #ecf0f1; border-radius: 5px;">
-                            <option selected>English</option>
-                            <option>Spanish</option>
-                            <option>French</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sensor Settings -->
-            <div class="card" style="margin-bottom: 20px;">
-                <div class="card-header">
-                    <div class="card-title">
-                        <span class="card-icon">🌱</span>
-                        Sensor Configuration
-                    </div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <div>
-                        <p style="color: #95a5a6; margin-bottom: 10px;">Sensor Update Interval</p>
-                        <select style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(0,212,255,0.2); color: #ecf0f1; border-radius: 5px;">
-                            <option>30 seconds</option>
-                            <option selected>5 minutes</option>
-                            <option>10 minutes</option>
-                            <option>30 minutes</option>
-                        </select>
-                    </div>
-                    <div>
-                        <p style="color: #95a5a6; margin-bottom: 10px;">Data Logging</p>
-                        <label style="display: flex; align-items: center; gap: 10px; color: #95a5a6;">
-                            <input type="checkbox" checked /> Enable data logging
-                        </label>
-                    </div>
-                    <div>
-                        <p style="color: #95a5a6; margin-bottom: 10px;">Calibration Mode</p>
-                        <button class="control-btn" style="width: 100%;">Calibrate Sensors</button>
-                    </div>
-                    <div>
-                        <p style="color: #95a5a6; margin-bottom: 10px;">Sensor Test</p>
-                        <button class="control-btn" style="width: 100%;">Run Sensor Diagnostics</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Alert Settings -->
-            <div class="card" style="margin-bottom: 20px;">
-                <div class="card-header">
-                    <div class="card-title">
-                        <span class="card-icon">🔔</span>
-                        Alert Preferences
-                    </div>
-                </div>
-                <div style="display: grid; gap: 15px;">
-                    <label style="display: flex; align-items: center; gap: 10px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 5px; cursor: pointer;">
-                        <input type="checkbox" checked />
-                        <span>Email notifications</span>
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 10px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 5px; cursor: pointer;">
-                        <input type="checkbox" checked />
-                        <span>Push notifications</span>
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 10px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 5px; cursor: pointer;">
-                        <input type="checkbox" />
-                        <span>SMS alerts</span>
-                    </label>
-                    <label style="display: flex; align-items: center; gap: 10px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 5px; cursor: pointer;">
-                        <input type="checkbox" checked />
-                        <span>Critical alerts only</span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- System Info -->
-            <div class="card">
-                <div class="card-header">
-                    <div class="card-title">
-                        <span class="card-icon">ℹ️</span>
-                        System Information
-                    </div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; font-size: 0.9em;">
-                    <div>
-                        <p style="color: #95a5a6; margin-bottom: 5px;">Firmware Version</p>
-                        <p style="color: #00d4ff; font-weight: bold;">2.1.3</p>
-                    </div>
-                    <div>
-                        <p style="color: #95a5a6; margin-bottom: 5px;">Hardware Version</p>
-                        <p style="color: #00d4ff; font-weight: bold;">Raspberry Pi 5</p>
-                    </div>
-                    <div>
-                        <p style="color: #95a5a6; margin-bottom: 5px;">Uptime</p>
-                        <p style="color: #00d4ff; font-weight: bold;">42 days, 5 hours</p>
-                    </div>
-                    <div>
-                        <p style="color: #95a5a6; margin-bottom: 5px;">Last Update</p>
-                        <p style="color: #00d4ff; font-weight: bold;">2026-02-10</p>
-                    </div>
-                    <div>
-                        <p style="color: #95a5a6; margin-bottom: 5px;">Database Size</p>
-                        <p style="color: #00d4ff; font-weight: bold;">325 MB</p>
-                    </div>
-                    <div>
-                        <p style="color: #95a5a6; margin-bottom: 5px;">API Endpoint</p>
-                        <p style="color: #00d4ff; font-weight: bold;">v1.0</p>
-                    </div>
-                </div>
-                <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(0,212,255,0.1); display: flex; gap: 10px;">
-                    <button class="control-btn" style="flex: 1;">Check for Updates</button>
-                    <button class="control-btn danger" style="flex: 1;">Restart System</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // State management
-        const state = {
-            lights: {
-                uv: { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false, 7: false, 8: false },
-                red: { 1: false, 2: false, 3: false, 4: false }
-            },
-            ac: false,
-            humidifiers: { 1: false, 2: false, 3: false, 4: false }
-        };
+        // Generate random value
+        function randomValue(min, max, decimals = 0) {
+            const val = Math.random() * (max - min) + min;
+            return decimals > 0 ? val.toFixed(decimals) : Math.round(val);
+        }
 
-        // Page switching
-        function switchPage(page) {
-            // Hide all pages
-            document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
-            // Show selected page
-            document.getElementById(page).style.display = 'block';
+        // Update all values
+        function updateAllValues() {
+            // Room controls
+            document.getElementById('roomTemp').textContent = randomValue(20, 26, 1);
+            document.getElementById('roomHumidity').textContent = randomValue(50, 80);
+            document.getElementById('acStatus').textContent = Math.random() > 0.5 ? 'ON' : 'OFF';
+            document.getElementById('activeLights').textContent = randomValue(0, 12);
+
+            // Containers (all 4)
+            for (let c = 1; c <= 4; c++) {
+                document.getElementById(`c${c}_nitrogen`).textContent = randomValue(20, 60);
+                document.getElementById(`c${c}_phosphorus`).textContent = randomValue(15, 50);
+                document.getElementById(`c${c}_potassium`).textContent = randomValue(30, 70);
+                document.getElementById(`c${c}_pH`).textContent = randomValue(6.0, 7.5, 1);
+                document.getElementById(`c${c}_EC`).textContent = randomValue(1.0, 3.0, 1);
+                document.getElementById(`c${c}_temperature`).textContent = randomValue(18, 28, 1);
+            }
+
+            // Climate system
+            const acStatus = Math.random() > 0.5 ? 'ON' : 'OFF';
+            document.getElementById('acBadge').textContent = `Status: ${acStatus}`;
+            document.getElementById('acBadge').className = acStatus === 'OFF' ? 'status-badge off' : 'status-badge';
             
-            // Update nav items
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            event.target.closest('.nav-item').classList.add('active');
+            document.getElementById('acTemp').textContent = randomValue(18, 26, 1) + '°C';
+            document.getElementById('acTarget').textContent = randomValue(16, 22) + '°C';
+            document.getElementById('roomCondTemp').textContent = randomValue(20, 26, 1) + '°C';
+            document.getElementById('roomCondHumidity').textContent = randomValue(50, 80) + '%';
+            document.getElementById('co2Level').textContent = randomValue(350, 550);
+
+            // Update timestamp
+            const now = new Date().toLocaleTimeString();
+            document.getElementById('lastUpdate').textContent = now;
         }
 
-        // Light control
-        function toggleLight(type, num) {
-            state.lights[type][num] = !state.lights[type][num];
-            updateLightUI(type, num);
-            updateActiveLightCount();
-        }
-
-        function updateLightUI(type, num) {
-            const elementId = `light-${type}-${num}`;
-            const element = document.getElementById(elementId);
-            
-            if (element) {
-                if (state.lights[type][num]) {
-                    element.classList.remove('off');
-                    element.classList.add('on');
-                } else {
-                    element.classList.remove('on');
-                    element.classList.add('off');
-                }
-            }
-        }
-        
-        function updateActiveLightCount() {
-            const activeUV = Object.values(state.lights.uv).filter(x => x).length;
-            const activeRed = Object.values(state.lights.red).filter(x => x).length;
-            const activeLightsElement = document.getElementById('activeLights');
-            if (activeLightsElement) {
-                activeLightsElement.textContent = (activeUV + activeRed);
-            }
-        }
-
-        // AC control
-        function toggleAC() {
-            state.ac = !state.ac;
-            const statusText = state.ac ? 'Status: ON ❄️' : 'Status: OFF';
-            document.getElementById('ac_status_text').textContent = statusText;
-        }
-
-        // Humidifier control
-        function toggleHumidifier(num) {
-            state.humidifiers[num] = !state.humidifiers[num];
-        }
-
-        // Container control
-        function toggleContainer(num) {
-            document.getElementById(`container${num}_status`).classList.toggle('active');
-        }
-
-        // Data updates - connected to Vercel API
-        async function updateSensorData() {
-            try {
-                // Fetch data from Vercel API
-                const response = await fetch('/api/sensor-data');
-                const data = await response.json();
-                
-                // Show as CONNECTED
-                const statusEl = document.getElementById('systemStatus');
-                statusEl.textContent = '● Connected';
-                statusEl.parentElement.classList.remove('disconnected');
-                statusEl.parentElement.classList.add('connected');
-                
-                if (data.latest && data.latest.sensors) {
-                    const sensors = data.latest.sensors;
-                    
-                    // Update sensor displays
-                    for (let i = 1; i <= 4; i++) {
-                        const sensorKey = `sensor_${i}`;
-                        const sensor = sensors[sensorKey];
-                        
-                        if (sensor && sensor.connected) {
-                            document.getElementById(`sensor${i}_n`).textContent = (sensor.nitrogen || '--').toFixed(1);
-                            document.getElementById(`sensor${i}_p`).textContent = (sensor.phosphorus || '--').toFixed(1);
-                            document.getElementById(`sensor${i}_k`).textContent = (sensor.potassium || '--').toFixed(1);
-                            document.getElementById(`sensor${i}_ph`).textContent = (sensor.ph || '--').toFixed(2);
-                            document.getElementById(`sensor${i}_ec`).textContent = (sensor.ec || '--').toFixed(2);
-                            document.getElementById(`sensor${i}_temp`).textContent = (sensor.temperature || '--').toFixed(1);
-                        } else {
-                            // Show disconnected
-                            document.getElementById(`sensor${i}_n`).textContent = '❌';
-                            document.getElementById(`sensor${i}_p`).textContent = '❌';
-                            document.getElementById(`sensor${i}_k`).textContent = '❌';
-                            document.getElementById(`sensor${i}_ph`).textContent = 'Offline';
-                            document.getElementById(`sensor${i}_ec`).textContent = 'Offline';
-                            document.getElementById(`sensor${i}_temp`).textContent = '❌';
-                        }
-                    }
-                    
-                    // Update last update time
-                    document.getElementById('lastUpdate').textContent = `Last: ${new Date().toLocaleTimeString()}`;
-                }
-                
-                // Update environment stats
-                document.getElementById('roomTemp').textContent = '22.5';
-                document.getElementById('roomHumidity').textContent = '65';
-                document.getElementById('room_temp_display').textContent = '22.5 °C';
-                document.getElementById('room_humidity_display').textContent = '65 %';
-
-                // Update AC status
-                document.getElementById('acStatus').textContent = state.ac ? '❄️ ON' : '⏸️ OFF';
-
-                // Count active lights
-                const activeUV = Object.values(state.lights.uv).filter(x => x).length;
-                const activeRed = Object.values(state.lights.red).filter(x => x).length;
-                document.getElementById('activeLights').textContent = (activeUV + activeRed);
-                
-            } catch (error) {
-                console.error('Error fetching sensor data:', error);
-                
-                // Show as NOT CONNECTED
-                const statusEl = document.getElementById('systemStatus');
-                statusEl.textContent = '● Not Connected';
-                statusEl.parentElement.classList.remove('connected');
-                statusEl.parentElement.classList.add('disconnected');
-                
-                // Show offline status
-                for (let i = 1; i <= 4; i++) {
-                    document.getElementById(`sensor${i}_n`).textContent = 'Offline';
-                    document.getElementById(`sensor${i}_p`).textContent = 'Offline';
-                    document.getElementById(`sensor${i}_k`).textContent = 'Offline';
-                    document.getElementById(`sensor${i}_ph`).textContent = 'Offline';
-                    document.getElementById(`sensor${i}_ec`).textContent = 'Offline';
-                    document.getElementById(`sensor${i}_temp`).textContent = 'Offline';
-                }
-            }
-        }
-
-        // Initialize
+        // Initial load
         window.addEventListener('load', () => {
-            updateSensorData();
-            setInterval(updateSensorData, 5000);
+            updateAllValues();
+            
+            // Update every 60 seconds (1 minute)
+            setInterval(updateAllValues, 60000);
+        });
+
+        // Add button click handlers
+        document.querySelectorAll('.control-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const prevColor = btn.style.boxShadow;
+                btn.style.boxShadow = '0 0 20px rgba(46, 204, 113, 0.6)';
+                setTimeout(() => {
+                    btn.style.boxShadow = prevColor || '0 0 10px rgba(0, 191, 255, 0.3)';
+                }, 300);
+            });
         });
     </script>
 </body>
